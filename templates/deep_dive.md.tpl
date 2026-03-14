@@ -10,6 +10,12 @@ type: "Deep Dive"
 - **来源**: {{source}} | **日期**: {{date}}
 - **链接**: [arXiv]({{url}}) | **代码**: {{has_code}}
 
+## 中文摘要
+{{abstract_zh}}
+
+## 英文摘要
+{{abstract_en}}
+
 ## 💡 方法要点
 {{method_highlights}}
 
@@ -17,8 +23,11 @@ type: "Deep Dive"
 {{experiment_highlights}}
 
 ## ⚖️ 优缺点分析
-- **优点**: {{pros}}
-- **缺点**: {{cons}}
+**优点**: 
+{{pros}}
+
+**缺点**: 
+{{cons}}
 
 ## 🛠️ 可复现性与移植性
 {{reproducibility}}
@@ -27,5 +36,6 @@ type: "Deep Dive"
 {{task_list}}
 
 ---
-## 中文摘要
-{{abstract_zh}}
+更新时间：{{last_update_time}}
+
+

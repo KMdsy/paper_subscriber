@@ -1,5 +1,4 @@
 config/
-scripts/
 templates/
 GEMINI.md
 *.backup

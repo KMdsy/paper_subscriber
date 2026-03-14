@@ -13,4 +13,8 @@ type: "Base"
 ## 中文摘要
 {{abstract_zh}}
 
-*(原始摘要: {{abstract_en}})*
+## 英文摘要
+{{abstract_en}}
+
+---
+更新时间：{{last_update_time}}
