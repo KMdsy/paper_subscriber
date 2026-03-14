@@ -42,6 +42,99 @@
     "score_data": {}
   },
   {
+    "title": "Beyond Barren Plateaus: A Scalable Quantum Convolutional Architecture for High-Fidelity Image Classification",
+    "authors": "Radhakrishnan Delhibabu",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11131",
+    "has_code": false,
+    "score": 1,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11131v1 Announce Type: new \nAbstract: While Quantum Convolutional Neural Networks (QCNNs) offer a theoretical paradigm for quantum machine learning, their practical implementation is severely bottlenecked by barren plateaus -- the exponential vanishing of gradients -- and poor empirical accuracy compared to classical counterparts. In this work, we propose a novel QCNN architecture utilizing localized cost functions and a hardware-efficient tensor-network initialization strategy to provably mitigate barren plateaus. We evaluate our scalable QCNN on the MNIST dataset, demonstrating a significant performance leap. By resolving the gradient vanishing issue, our optimized QCNN achieves a classification accuracy of 98.7\\%, a substantial improvement over the baseline QCNN accuracy of 52.32\\% found in unmitigated models. Furthermore, we provide empirical evidence of a parameter-efficiency advantage, requiring $\\mathcal{O}(\\log N)$ fewer trainable parameters than equivalent classical CNNs to achieve $>95\\%$ convergence. This work bridges the gap between theoretical quantum utility and practical application, providing a scalable framework for quantum computer vision tasks without succumbing to loss landscape concentration.",
+    "reason": "The paper focuses on Quantum Convolutional Neural Networks (QCNNs) for image classification and addressing quantum-specific gradient issues (barren plateaus). It does not relate to LLM data selection, speculative decoding, or CoT reasoning.",
+    "abstract_zh": "I will read `scripts/fetch_and_process.py` to understand the translation style and prompts used in this project.\n**标题：超越贫瘠高原：一种用于高保真图像分类的可扩展量子卷积架构**\n\n**摘要：** 虽然量子卷积神经网络 (QCNN) 为量子机器学习提供了一种理论范式，但其在实际实现中受到“贫瘠高原”（即梯度的指数级消失）以及与经典模型相比极差的实验准确性的严重制约。在这项工作中，我们提出了一种新型 QCNN 架构，利用局部代价函数和一种硬件高效的张量网络初始化策略，证明其能够缓解贫瘠高原现象。我们在 MNIST 数据集上评估了这种可扩展的 QCNN，展示了显著的性能提升。通过解决梯度消失问题，我们优化后的 QCNN 达到了 98.7% 的分类准确率，相较于未优化模型中 52.32% 的基准 QCNN 准确率有了实质性的提高。此外，我们提供了参数效率优势的实证证据：要达到 >95% 的收敛速度，该模型所需的待训练参数比等效的经典 CNN 少 $\\mathcal{O}(\\log N)$。这项工作填补了理论量子效用与实际应用之间的空白，为量子计算机视觉任务提供了一个可扩展的框架，且不会陷入损失函数地形的集中化问题。",
+    "score_data": {}
+  },
+  {
+    "title": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation",
+    "authors": "Jongwoo Ko, Sara Abdali, Young Jin Kim, Tianyi Chen, Pashmina Cameron",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11137",
+    "has_code": false,
+    "score": 5,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11137v1 Announce Type: new \nAbstract: On-policy distillation is pivotal for transferring reasoning capabilities to capacity-constrained models, yet remains prone to instability and negative transfer. We show that on-policy distillation can be interpreted, both theoretically and empirically, as a form of policy optimization, where the teacher-student log-likelihood ratio acts as a token reward. From this insight, we introduce REOPOLD (Relaxed On-Policy Distillation) a framework that stabilizes optimization by relaxing the strict imitation constraints of standard on-policy distillation. Specifically, REOPOLD temperately and selectively leverages rewards from the teacher through mixture-based reward clipping, entropy-based token-level dynamic sampling, and a unified exploration-to-refinement training strategy. Empirically, REOPOLD surpasses its baselines with superior sample efficiency during training and enhanced test-time scaling at inference, across mathematical, visual, and agentic tool-use reasoning tasks. Specifically, REOPOLD outperforms recent RL approaches achieving 6.7~12x greater sample efficiency and enables a 7B student to match a 32B teacher in visual reasoning with a ~3.32x inference speedup.",
+    "reason": "High relevance and quality: The paper focuses on scaling reasoning capabilities, directly aligning with the 'LLM Reasoning & CoT' category and 'mathematical reasoning' keyword. It introduces a novel distillation framework (REOPOLD) that significantly improves sample efficiency (6.7-12x) and enables smaller models to match much larger teachers in complex reasoning tasks.",
+    "abstract_zh": "Title: 通过松弛同策略蒸馏实现高效推理扩展 (Scaling Reasoning Efficiently via Relaxed On-Policy Distillation)\n\nAbstract: arXiv:2603.11137v1 公告类型: 新增\n\n摘要：同策略蒸馏（On-policy distillation）是将推理能力迁移至受限容量模型的关键，但其仍面临不稳定性及负迁移的问题。我们通过理论与实证表明，同策略蒸馏可被解释为一种策略优化形式，其中教师与学生模型的对数似然比充当了词元级奖励（token reward）。基于这一洞察，我们提出了 REOPOLD（Relaxed On-Policy Distillation，松弛同策略蒸馏）框架，通过放宽标准同策略蒸馏中严格的模仿约束来稳定优化过程。具体而言，REOPOLD 通过基于混合的奖励裁剪（mixture-based reward clipping）、基于熵的词元级动态采样以及统一的“从探索到精炼”训练策略，适度且有选择地利用来自教师模型的奖励。实验结果显示，在数学、视觉及智能体工具使用推理任务中，REOPOLD 在训练期间展现了卓越的样本效率，并在推理阶段实现了增强的测试时扩展（test-time scaling），均优于基准模型。特别地，REOPOLD 的样本效率达到了近期强化学习（RL）方法的 6.7~12 倍，并使 7B 规模的学生模型在视觉推理任务中达到了 32B 教师模型的水平，且推理速度提升了约 3.32 倍。",
+    "score_data": {
+      "method_highlights": [
+        "Interprets on-policy distillation as policy optimization where the teacher-student log-likelihood ratio serves as a token reward.",
+        "Introduces REOPOLD (Relaxed On-Policy Distillation) to stabilize optimization by relaxing strict imitation constraints.",
+        "Employs mixture-based reward clipping to temper teacher rewards.",
+        "Utilizes entropy-based token-level dynamic sampling for selective learning.",
+        "Implements a unified exploration-to-refinement training strategy."
+      ],
+      "experiment_highlights": [
+        "Achieves 6.7x to 12x greater sample efficiency compared to recent Reinforcement Learning approaches.",
+        "Enables a 7B student model to match the performance of a 32B teacher in visual reasoning tasks.",
+        "Delivers a ~3.32x inference speedup through successful model compression.",
+        "Demonstrates enhanced test-time scaling at inference across mathematical, visual, and agentic tool-use reasoning.",
+        "Surpasses standard on-policy distillation baselines in training stability."
+      ],
+      "pros": [
+        "Significant improvement in sample efficiency, reducing the computational cost of distillation.",
+        "Effective model compression (7B matching 32B) without sacrificing reasoning capabilities.",
+        "Theoretical grounding by linking distillation to policy optimization.",
+        "Versatility across multiple domains including math, vision, and tool-use.",
+        "Addresses the common 'negative transfer' and instability issues in standard on-policy methods."
+      ],
+      "cons": [
+        "Complexity of hyperparameters (clipping thresholds, entropy sampling rates) may require careful tuning.",
+        "Performance in extremely low-resource settings or even smaller models (e.g., <3B) is not detailed.",
+        "Potential dependency on high-quality teacher log-likelihoods which might not always be available for closed-source models."
+      ],
+      "reproducibility": "Moderate. The abstract outlines specific components like reward clipping and dynamic sampling, but successful reproduction would depend on the specific mixture ratios and the implementation details of the 'exploration-to-refinement' strategy mentioned in the full paper.",
+      "task_list": [
+        "Validate REOPOLD on non-reasoning tasks (e.g., creative writing or summarization) to test its generality.",
+        "Compare the 'token reward' interpretation against standard KL-divergence minimization in distillation.",
+        "Investigate the impact of different teacher architectures on the student's ability to scale via relaxed distillation.",
+        "Develop an automated way to schedule the 'exploration-to-refinement' transition phases."
+      ]
+    }
+  },
+  {
+    "title": "H2LooP Spark Preview: Continual Pretraining of Large Language Models for Low-Level Embedded Systems Code",
+    "authors": "Amit Singh, Vedant Nipane, Pulkit Agrawal, Jatin Kishnani",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11139",
+    "has_code": true,
+    "score": 3,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11139v1 Announce Type: new \nAbstract: Large language models (LLMs) demonstrate strong code generation abilities in general-purpose programming languages but remain limited in specialized domains such as low-level embedded systems programming. This domain involves hardware register manipulation, vendor-specific SDKs, real-time operating system APIs, and hardware abstraction layers that are underrepresented in standard pretraining corpora. We introduce H2LooP Spark Preview, a continual pretraining (CPT) pipeline that adapts the OLMo-3-7B-a fully open language model to the embedded systems domain using BF16 LoRA with rank-stabilized scaling on 8 NVIDIA H100 GPUs. Our training corpus is constructed from repository-datasheet pairs covering 100B tokens of raw embedded systems data across 117 manufacturers, processed using the hierarchical datasheet-to-code mapping approach proposed in SpecMap (Nipane et al., 2026). The resulting curated dataset split contains 23.5B tokens across 13 embedded domains. Continual pretraining with high-rank LoRA (r=512) yields substantial gains, reducing in-domain perplexity by 70.4% and held-out repository perplexity by 66.1%. On generative code completion benchmarks spanning 13 embedded domains, our 7B model outperforms Claude Opus 4.6 and Qwen3-Coder-30B on 8 categories in token accuracy, showing that targeted continual pretraining enables smaller open-weight models to rival frontier systems on specialized technical tasks. We release the production training checkpoint on Huggingface as an open-source artifact.",
+    "reason": "The paper is relevant to the 'LLM training: data selection' category, specifically focusing on 'data curation' and 'data quality' through its 'hierarchical datasheet-to-code mapping approach' (SpecMap) and curated 23.5B token dataset. While the primary application is specialized (low-level embedded systems), the methodology for adapting models via targeted continual pretraining aligns with your interests in data curation techniques. It does not address Speculative Decoding or Reasoning/CoT.",
+    "abstract_zh": "标题：H2LooP Spark Preview：面向底层嵌入式系统代码的大语言模型持续预训练\n\n摘要：大语言模型 (LLM) 在通用编程语言中展现出强大的代码生成能力，但在底层嵌入式系统编程等专业领域仍表现有限。该领域涉及硬件寄存器操作、厂商特定 SDK、实时操作系统 API 以及硬件抽象层，而这些内容在标准预训练语料库中代表性不足。我们推出了 H2LooP Spark Preview，这是一个持续预训练 (CPT) 流水线，它使用 BF16 LoRA 并在 8 台 NVIDIA H100 GPU 上进行秩稳定缩放，使 OLMo-3-7B（一种完全开放的语言模型）适配嵌入式系统领域。我们的训练语料库构建自涵盖 117 家制造商、1000 亿 token 原始嵌入式系统数据的“仓库-数据手册”对，并使用 SpecMap (Nipane et al., 2026) 中提出的分层数据手册到代码映射方法进行处理。最终得到的精选数据集包含 13 个嵌入式领域的 235 亿 token。使用高秩 LoRA (r=512) 进行持续预训练取得了显著收益，使域内困惑度降低了 70.4%，留存仓库困惑度降低了 66.1%。在涵盖 13 个嵌入式领域的生成式代码补全基准测试中，我们的 7B 模型在 8 个类别的 token 准确率上超过了 Claude Opus 4.6 和 Qwen3-Coder-30B，这表明针对性的持续预训练能使较小的开源权重模型在专业技术任务上与前沿系统相媲美。我们将生产训练检查点作为开源成果发布在 Huggingface 上。",
+    "score_data": {
+      "core_contribution": "Introduced H2LooP Spark Preview, a continual pretraining (CPT) pipeline and a curated 23.5B token dataset that enables the 7B OLMo-3 model to outperform frontier models (Claude Opus 4.6, Qwen3-Coder-30B) in specialized low-level embedded systems code generation.",
+      "app_value_score": 9
+    }
+  },
+  {
+    "title": "Procedural Fairness via Group Counterfactual Explanation",
+    "authors": "Gideon Popoola, John Sheppard",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11140",
+    "has_code": false,
+    "score": 1,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11140v1 Announce Type: new \nAbstract: Fairness in machine learning research has largely focused on outcome-oriented fairness criteria such as Equalized Odds, while comparatively less attention has been given to procedural-oriented fairness, which addresses how a model arrives at its predictions. Neglecting procedural fairness means it is possible for a model to generate different explanations for different protected groups, thereby eroding trust. In this work, we introduce Group Counterfactual Integrated Gradients (GCIG), an in-processing regularization framework that enforces explanation invariance across groups, conditioned on the true label. For each input, GCIG computes explanations relative to multiple Group Conditional baselines and penalizes cross-group variation in these attributions during training. GCIG formalizes procedural fairness as Group Counterfactual explanation stability and complements existing fairness objectives that constrain predictions alone. We compared GCIG empirically against six state-of-the-art methods, and the results show that GCIG substantially reduces cross-group explanation disparity while maintaining competitive predictive performance and accuracy-fairness trade-offs. Our results also show that aligning model reasoning across groups offers a principled and practical avenue for advancing fairness beyond outcome parity.",
+    "reason": "The paper focuses on algorithmic fairness and model interpretability (XAI) using Group Counterfactual Integrated Gradients. It does not align with the specified research interests of LLM data selection, speculative decoding, or Chain-of-Thought reasoning.",
+    "abstract_zh": "I will read `scripts/fetch_and_process.py` to see how it handles translations and ensure my output matches the project's style.\n\n标题：通过群体反事实解释实现程序公平性\n摘要：机器学习研究中的公平性主要集中在面向结果的公平性标准（如均等化赔率），而对面向程序的公平性关注相对较少，后者关注模型如何得出其预测。忽视程序公平性意味着模型可能为不同的受保护群体生成不同的解释，从而削弱信任。在这项工作中，我们引入了群体反事实综合梯度（GCIG），这是一种进程内正则化框架，它在以真实标签为条件的情况下强制执行跨群体的解释不变性。对于每个输入，GCIG 相对于多个群体条件基准计算解释，并在训练期间惩罚这些归因中的跨群体差异。GCIG 将程序公平性形式化为群体反事实解释的稳定性，并补充了仅约束预测的现有公平性目标。我们将 GCIG 与六种最先进的方法进行了实证比较，结果表明 GCIG 在保持竞争力的预测性能和准确性-公平性权衡的同时，显著减少了跨群体的解释差异。我们的结果还表明，跨群体对齐模型推理为超越结果均等、推进公平性提供了一条原则性且实用的途径。",
+    "score_data": {}
+  },
+  {
     "title": "Speculative Decoding Scaling Laws (SDSL): Throughput Optimization Made Simple",
     "authors": "Amirhossein Bozorgkhoo, Igor Molybog",
     "source": "arXiv cs.CL",

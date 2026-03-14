@@ -157,10 +157,27 @@ def save_to_json(papers):
 def main():
     domains_context = "\n".join([f"- {d['name']}: {', '.join(d['keywords'])}" for d in domains])
     all_raw = []
+    
+    # 获取已有数据用于查重和补全检查
+    json_path = Path("docs/data.json")
+    existing_papers = []
+    if json_path.exists():
+        try:
+            existing_papers = json.loads(json_path.read_text(encoding="utf-8"))
+        except: pass
+    
+    existing_urls = {p["url"]: p for p in existing_papers}
+
     for src in sources:
         print(f"Fetching {src['name']}...")
         feed = feedparser.parse(src["url"])
-        for entry in feed.entries[:10]:
+        for entry in feed.entries[:15]:
+            url = entry.get("link", "")
+            
+            # 如果 URL 已存在且已经有中文摘要，则跳过抓取
+            if url in existing_urls and "abstract_zh" in existing_urls[url] and existing_urls[url]["abstract_zh"]:
+                continue
+
             title = entry.get("title", "")
             summary = entry.get("summary", "")
             authors = ", ".join([a.name for a in entry.get("authors", [])]) if entry.get("authors") else ""
@@ -171,28 +188,26 @@ def main():
                 if s > best_domain["score"]:
                     best_domain = {"score": s, "id": d["id"]}
             
-            # Initial filter: only papers with ANY keyword match or pref source
             is_pref = is_preferred_source(authors, summary)
             if best_domain["score"] == 0 and not is_pref: continue
 
             all_raw.append({
                 "title": title, "authors": authors, "source": src["name"],
                 "date": entry.get("published", datetime.utcnow().strftime("%Y-%m-%d")),
-                "url": entry.get("link", ""), "has_code": "code" in summary.lower(),
+                "url": url, "has_code": "code" in summary.lower(),
                 "score": 1, "domain_id": best_domain["id"],
                 "abstract": summary, "reason": ""
             })
     
-    seen = set()
-    final_list = []
+    # 处理新论文或需要补全的论文
+    processed_list = []
     for p in all_raw:
-        if p["url"] in seen: continue
-        seen.add(p["url"])
         res = process_paper(p, domains_context)
-        if res: final_list.append(res)
+        if res: processed_list.append(res)
         time.sleep(1)
     
-    if final_list: save_to_json(final_list)
+    # 合并新旧数据
+    save_to_json(processed_list)
 
 if __name__ == "__main__":
     main()
