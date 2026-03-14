@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Subscriber - 研究看板</title>
+    <!-- Vue 3 & Element Plus -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <style>
+        body { background-color: #f5f7fa; font-family: -apple-system, sans-serif; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .paper-card { margin-bottom: 20px; transition: transform 0.2s; }
+        .paper-card:hover { transform: translateY(-3px); }
+        .score-tag { font-weight: bold; }
+        .filter-bar { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+<div id="app" class="container">
+    <el-header style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #409EFF;">📚 Research Paper Dashboard</h1>
+    </el-header>
+
+    <div class="filter-bar">
+        <el-row :gutter="20">
+            <el-col :span="8">
+                <el-input v-model="search" placeholder="搜索关键词..." prefix-icon="Search"></el-input>
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="filterDomain" placeholder="研究领域" clearable style="width: 100%;">
+                    <el-option v-for="d in domains" :key="d" :label="d" :value="d"></el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="6">
+                <el-select v-model="filterScore" placeholder="最低评分" clearable style="width: 100%;">
+                    <el-option v-for="s in [5,4,3,2,1]" :key="s" :label="s + '分'" :value="s"></el-option>
+                </el-select>
+            </el-col>
+            <el-col :span="4">
+                <el-button type="primary" @click="resetFilters" plain>重置</el-button>
+            </el-col>
+        </el-row>
+    </div>
+
+    <el-row :gutter="20">
+        <el-col v-for="paper in filteredPapers" :key="paper.url" :xs="24" :sm="12" :md="8">
+            <el-card class="paper-card" shadow="hover">
+                <template #header>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <el-link :href="paper.url" target="_blank" style="font-weight: bold; font-size: 16px;">
+                            {{ paper.title }}
+                        </el-link>
+                        <el-tag :type="getScoreType(paper.score)" class="score-tag">{{ paper.score }}</el-tag>
+                    </div>
+                </template>
+                <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                    <p><strong>作者:</strong> {{ paper.authors }}</p>
+                    <p><strong>领域:</strong> {{ paper.domain_id }} | <strong>来源:</strong> {{ paper.source }}</p>
+                </div>
+                <div style="height: 100px; overflow: hidden; font-size: 14px; color: #333; line-height: 1.5;">
+                    {{ paper.abstract }}
+                </div>
+                <template #footer>
+                    <div style="text-align: right; font-size: 12px; color: #999;">
+                        {{ paper.date }}
+                    </div>
+                </template>
+            </el-card>
+        </el-col>
+    </el-row>
+</div>
+
+<script>
+    const { createApp, ref, computed, onMounted } = Vue;
+    createApp({
+        setup() {
+            const papers = ref([]);
+            const search = ref('');
+            const filterDomain = ref('');
+            const filterScore = ref(null);
+
+            const fetchPapers = async () => {
+                try {
+                    const res = await fetch('data.json');
+                    papers.value = await res.json();
+                } catch (e) { console.error('Data not found', e); }
+            };
+
+            const domains = computed(() => [...new Set(papers.value.map(p => p.domain_id))]);
+
+            const filteredPapers = computed(() => {
+                return papers.value.filter(p => {
+                    const matchSearch = p.title.toLowerCase().includes(search.value.toLowerCase()) || 
+                                       p.abstract.toLowerCase().includes(search.value.toLowerCase());
+                    const matchDomain = !filterDomain.value || p.domain_id === filterDomain.value;
+                    const matchScore = !filterScore.value || p.score >= filterScore.value;
+                    return matchSearch && matchDomain && matchScore;
+                });
+            });
+
+            const getScoreType = (score) => {
+                if (score >= 5) return 'danger';
+                if (score >= 4) return 'warning';
+                if (score >= 3) return 'primary';
+                return 'info';
+            };
+
+            const resetFilters = () => {
+                search.value = '';
+                filterDomain.value = '';
+                filterScore.value = null;
+            };
+
+            onMounted(fetchPapers);
+
+            return { papers, search, filterDomain, filterScore, domains, filteredPapers, getScoreType, resetFilters };
+        }
+    }).use(ElementPlus).mount('#app');
+</script>
+</body>
+</html>

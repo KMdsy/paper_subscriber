@@ -1,24 +1,65 @@
+global_settings:
+  preferred_institutions:
+  - DeepMind
+  - FAIR
+  - Meta AI
+  - OpenAI
+  - Google Research
+  - Microsoft Research
+  - MIT
+  - Stanford
+  - Tsinghua University
+  - Peking University
+  - ByteDance
+  - Berkeley
+  - CMU
+  preferred_authors: []
+  sources:
+  - name: arXiv cs.CL
+    url: https://export.arxiv.org/rss/cs.CL
+  - name: arXiv cs.LG
+    url: https://export.arxiv.org/rss/cs.LG
+  - name: arXiv cs.AI
+    url: https://export.arxiv.org/rss/cs.AI
 domain:
-  - id: llm-data-selection
-    name: "LLM training: data selection"
-    priority: high
-    keywords:
-      - "data selection"
-      - "data curation"
-      - "data filtering"
-      - "curriculum learning"
-      - "data pruning"
-      - "data dedup"
-      - "data quality"
-      - "influence functions"
-    exclude_keywords: ["survey","tutorial"]
-  - id: speculative-decoding
-    name: "Speculative decoding"
-    priority: high
-    keywords:
-      - "speculative decoding"
-      - "two-pass decoding"
-      - "speculative sampling"
-      - "speculative parallel decoding"
-      - "fast decoding"
-    exclude_keywords: []
+- id: llm-data-selection
+  name: 'LLM training: data selection'
+  priority: high
+  keywords:
+  - data selection
+  - data curation
+  - data filtering
+  - curriculum learning
+  - data pruning
+  - data dedup
+  - data quality
+  - influence functions
+  exclude_keywords:
+  - survey
+  - tutorial
+- id: speculative-decoding
+  name: Speculative decoding
+  priority: high
+  keywords:
+  - speculative decoding
+  - two-pass decoding
+  - speculative sampling
+  - speculative parallel decoding
+  - fast decoding
+  exclude_keywords: []
+- id: llm-reasoning
+  name: LLM Reasoning & CoT
+  keywords:
+  - chain-of-thought
+  - multi-step reasoning
+  - logical reasoning
+  - mathematical reasoning
+  - self-consistency
+  - tree-of-thoughts
+  - step-by-step reasoning
+  - zero-shot cot
+  exclude_keywords:
+  - survey
+  - tutorial
+  - hardware acceleration
+  priority: high

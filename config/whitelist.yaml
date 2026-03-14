@@ -1,0 +1,29 @@
+# 白名单配置：知名机构与顶级学者
+# 命中白名单的论文将获得额外的权重或直接作为高分候选
+preferred_institutions:
+  - "DeepMind"
+  - "FAIR"
+  - "Meta AI"
+  - "OpenAI"
+  - "Google Research"
+  - "Microsoft Research"
+  - "Anthropic"
+  - "MIT"
+  - "Stanford"
+  - "Tsinghua University"
+  - "Peking University"
+  - "ByteDance"
+  - "Berkeley"
+  - "CMU"
+  - "Oxford"
+  - "Cambridge"
+
+preferred_authors:
+  - "Andrej Karpathy"
+  - "Ilya Sutskever"
+  - "Yann LeCun"
+  - "Geoffrey Hinton"
+  - "Yoshua Bengio"
+  - "Andrew Ng"
+  - "Fei-Fei Li"
+  - "Christopher Manning"
