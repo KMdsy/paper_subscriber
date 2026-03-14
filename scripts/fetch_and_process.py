@@ -305,6 +305,14 @@ def main():
 
     # 获取已有数据用于查重和补全检查
     json_path = Path("docs/data.json")
+    
+    # 导出领域映射供前端使用
+    domain_map = {d['id']: d['name'] for d in domains}
+    domain_map['general'] = 'General Research'
+    domains_json_path = Path("docs/domains.json")
+    domains_json_path.write_text(json.dumps(domain_map, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Domain mapping exported to {domains_json_path}")
+
     existing_papers = []
     if json_path.exists():
         try:

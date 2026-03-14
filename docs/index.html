@@ -92,10 +92,20 @@
             const papers = ref([]);
             const search = ref('');
             const showAbstractEn = ref(false);
+            const domainNames = ref({});
 
             const fetchPapers = async () => {
                 const res = await fetch('data.json');
                 papers.value = await res.json();
+            };
+
+            const fetchDomains = async () => {
+                try {
+                    const res = await fetch('domains.json');
+                    domainNames.value = await res.json();
+                } catch (e) {
+                    console.error("Failed to load domains.json", e);
+                }
             };
 
             const getScoreType = (score) => {
@@ -115,24 +125,29 @@
                 // 2. 领域分组
                 const groups = {};
                 filtered.forEach(p => {
-                    if (!groups[p.domain_id]) groups[p.domain_id] = {};
-                    if (!groups[p.domain_id][p.score]) groups[p.domain_id][p.score] = [];
-                    groups[p.domain_id][p.score].push(p);
+                    const dId = p.domain_id || 'general';
+                    if (!groups[dId]) groups[dId] = {};
+                    if (!groups[dId][p.score]) groups[dId][p.score] = [];
+                    groups[dId][p.score].push(p);
                 });
 
                 // 3. 结构化成数组
-                return Object.keys(groups).map(domainName => ({
-                    name: domainName,
-                    scores: Object.keys(groups[domainName])
+                return Object.keys(groups).map(domainId => ({
+                    id: domainId,
+                    name: domainNames.value[domainId] || domainId,
+                    scores: Object.keys(groups[domainId])
                         .sort((a, b) => b - a) // 分数降序
                         .map(score => ({
                             val: parseInt(score),
-                            papers: groups[domainName][score]
+                            papers: groups[domainId][score]
                         }))
                 }));
             });
 
-            onMounted(fetchPapers);
+            onMounted(() => {
+                fetchPapers();
+                fetchDomains();
+            });
             return { search, showAbstractEn, groupedData, getScoreType };
         }
     }).use(ElementPlus).mount('#app');
