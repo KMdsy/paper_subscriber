@@ -47,19 +47,3 @@ domain:
   - speculative parallel decoding
   - fast decoding
   exclude_keywords: []
-- id: llm-reasoning
-  name: LLM Reasoning & CoT
-  keywords:
-  - chain-of-thought
-  - multi-step reasoning
-  - logical reasoning
-  - mathematical reasoning
-  - self-consistency
-  - tree-of-thoughts
-  - step-by-step reasoning
-  - zero-shot cot
-  exclude_keywords:
-  - survey
-  - tutorial
-  - hardware acceleration
-  priority: high
