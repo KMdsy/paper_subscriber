@@ -1,53 +1,5 @@
 [
   {
-    "title": "Interventional Time Series Priors for Causal Foundation Models",
-    "authors": "Dennis Thumm, Ying Chen",
-    "source": "arXiv cs.LG",
-    "date": "2026-03-14 12:00:00",
-    "url": "https://arxiv.org/abs/2603.11090",
-    "has_code": false,
-    "score": 1,
-    "domain_id": "general",
-    "abstract": "arXiv:2603.11090v1 Announce Type: new \nAbstract: Prior-data fitted networks (PFNs) have emerged as powerful foundation models for tabular causal inference, yet their extension to time series remains limited by the absence of synthetic data generators that provide interventional targets. Existing time series benchmarks generate observational data with ground-truth causal graphs but lack the interventional data required for training causal foundation models. To address this, we propose \\textbf{CausalTimePrior}, a principled framework for generating synthetic temporal structural causal models (TSCMs) with paired observational and interventional time series. Our prior supports configurable causal graph structures, nonlinear autoregressive mechanisms, regime-switching dynamics, and multiple intervention types (hard, soft, time-varying). We demonstrate that PFNs trained on CausalTimePrior can perform in-context causal effect estimation on held-out TSCMs, establishing a pathway toward foundation models for time series causal inference.",
-    "reason": "该论文的主题是时间序列因果推理（Causal Inference for Time Series）和合成数据生成（CausalTimePrior），与您关注的 LLM 训练数据选择（Data Selection）或投机采样/解码（Speculative Decoding）没有直接相关性。虽然涉及 Foundation Models 的概念，但应用领域完全不同。",
-    "score_data": {
-      "title": "Interventional Time Series Priors for Causal Foundation Models",
-      "authors": "Dennis Thumm, Ying Chen",
-      "source": "arXiv cs.LG",
-      "date": "2026-03-14 12:00:00",
-      "url": "https://arxiv.org/abs/2603.11090",
-      "has_code": false,
-      "score": 1,
-      "domain_id": "general",
-      "abstract": "arXiv:2603.11090v1 Announce Type: new \nAbstract: Prior-data fitted networks (PFNs) have emerged as powerful foundation models for tabular causal inference, yet their extension to time series remains limited by the absence of synthetic data generators that provide interventional targets. Existing time series benchmarks generate observational data with ground-truth causal graphs but lack the interventional data required for training causal foundation models. To address this, we propose \\textbf{CausalTimePrior}, a principled framework for generating synthetic temporal structural causal models (TSCMs) with paired observational and interventional time series. Our prior supports configurable causal graph structures, nonlinear autoregressive mechanisms, regime-switching dynamics, and multiple intervention types (hard, soft, time-varying). We demonstrate that PFNs trained on CausalTimePrior can perform in-context causal effect estimation on held-out TSCMs, establishing a pathway toward foundation models for time series causal inference.",
-      "reason": "该论文的主题是时间序列因果推理（Causal Inference for Time Series）和合成数据生成（CausalTimePrior），与您关注的 LLM 训练数据选择（Data Selection）或投机采样/解码（Speculative Decoding）没有直接相关性。虽然涉及 Foundation Models 的概念，但应用领域完全不同。"
-    }
-  },
-  {
-    "title": "Learning Tree-Based Models with Gradient Descent",
-    "authors": "Sascha Marton",
-    "source": "arXiv cs.LG",
-    "date": "2026-03-14 12:00:00",
-    "url": "https://arxiv.org/abs/2603.11117",
-    "has_code": false,
-    "score": 1,
-    "domain_id": "general",
-    "abstract": "arXiv:2603.11117v1 Announce Type: new \nAbstract: Tree-based models are widely recognized for their interpretability and have proven effective in various application domains, particularly in high-stakes domains. However, learning decision trees (DTs) poses a significant challenge due to their combinatorial complexity and discrete, non-differentiable nature. As a result, traditional methods such as CART, which rely on greedy search procedures, remain the most widely used approaches. These methods make locally optimal decisions at each node, constraining the search space and often leading to suboptimal tree structures. Additionally, their demand for custom training methods precludes a seamless integration into modern machine learning (ML) approaches.\n  In this thesis, we propose a novel method for learning hard, axis-aligned DTs through gradient descent. Our approach utilizes backpropagation with a straight-through operator on a dense DT representation, enabling the joint optimization of all tree parameters, thereby addressing the two primary limitations of traditional DT algorithms. First, gradient-based training is not constrained by the sequential selection of locally optimal splits but, instead, jointly optimizes all tree parameters. Second, by leveraging gradient descent for optimization, our approach seamlessly integrates into existing ML approaches e.g., for multimodal and reinforcement learning tasks, which inherently rely on gradient descent.\n  These advancements allow us to achieve state-of-the-art results across multiple domains, including interpretable DTs rees for small tabular datasets, advanced models for complex tabular data, multimodal learning, and interpretable reinforcement learning without information loss. By bridging the gap between DTs and gradient-based optimization, our method significantly enhances the performance and applicability of tree-based models across various ML domains.",
-    "reason": "该论文主要研究如何通过梯度下降优化决策树（Decision Trees）模型，核心贡献在于提升树模型的训练效率和可集成性。这与您关注的 LLM Data Selection（数据筛选、清洗、课程学习等）以及 Speculative Decoding（推理加速、投机采样等）方向完全不相关。虽然论文提到的梯度优化是机器学习的基础，但在您的研究领域内缺乏直接的应用价值。",
-    "score_data": {
-      "title": "Learning Tree-Based Models with Gradient Descent",
-      "authors": "Sascha Marton",
-      "source": "arXiv cs.LG",
-      "date": "2026-03-14 12:00:00",
-      "url": "https://arxiv.org/abs/2603.11117",
-      "has_code": false,
-      "score": 1,
-      "domain_id": "general",
-      "abstract": "arXiv:2603.11117v1 Announce Type: new \nAbstract: Tree-based models are widely recognized for their interpretability and have proven effective in various application domains, particularly in high-stakes domains. However, learning decision trees (DTs) poses a significant challenge due to their combinatorial complexity and discrete, non-differentiable nature. As a result, traditional methods such as CART, which rely on greedy search procedures, remain the most widely used approaches. These methods make locally optimal decisions at each node, constraining the search space and often leading to suboptimal tree structures. Additionally, their demand for custom training methods precludes a seamless integration into modern machine learning (ML) approaches.\n  In this thesis, we propose a novel method for learning hard, axis-aligned DTs through gradient descent. Our approach utilizes backpropagation with a straight-through operator on a dense DT representation, enabling the joint optimization of all tree parameters, thereby addressing the two primary limitations of traditional DT algorithms. First, gradient-based training is not constrained by the sequential selection of locally optimal splits but, instead, jointly optimizes all tree parameters. Second, by leveraging gradient descent for optimization, our approach seamlessly integrates into existing ML approaches e.g., for multimodal and reinforcement learning tasks, which inherently rely on gradient descent.\n  These advancements allow us to achieve state-of-the-art results across multiple domains, including interpretable DTs rees for small tabular datasets, advanced models for complex tabular data, multimodal learning, and interpretable reinforcement learning without information loss. By bridging the gap between DTs and gradient-based optimization, our method significantly enhances the performance and applicability of tree-based models across various ML domains.",
-      "reason": "该论文主要研究如何通过梯度下降优化决策树（Decision Trees）模型，核心贡献在于提升树模型的训练效率和可集成性。这与您关注的 LLM Data Selection（数据筛选、清洗、课程学习等）以及 Speculative Decoding（推理加速、投机采样等）方向完全不相关。虽然论文提到的梯度优化是机器学习的基础，但在您的研究领域内缺乏直接的应用价值。"
-    }
-  },
-  {
     "title": "Beyond Barren Plateaus: A Scalable Quantum Convolutional Architecture for High-Fidelity Image Classification",
     "authors": "Radhakrishnan Delhibabu",
     "source": "arXiv cs.LG",
@@ -57,19 +9,7 @@
     "score": 1,
     "domain_id": "general",
     "abstract": "arXiv:2603.11131v1 Announce Type: new \nAbstract: While Quantum Convolutional Neural Networks (QCNNs) offer a theoretical paradigm for quantum machine learning, their practical implementation is severely bottlenecked by barren plateaus -- the exponential vanishing of gradients -- and poor empirical accuracy compared to classical counterparts. In this work, we propose a novel QCNN architecture utilizing localized cost functions and a hardware-efficient tensor-network initialization strategy to provably mitigate barren plateaus. We evaluate our scalable QCNN on the MNIST dataset, demonstrating a significant performance leap. By resolving the gradient vanishing issue, our optimized QCNN achieves a classification accuracy of 98.7\\%, a substantial improvement over the baseline QCNN accuracy of 52.32\\% found in unmitigated models. Furthermore, we provide empirical evidence of a parameter-efficiency advantage, requiring $\\mathcal{O}(\\log N)$ fewer trainable parameters than equivalent classical CNNs to achieve $>95\\%$ convergence. This work bridges the gap between theoretical quantum utility and practical application, providing a scalable framework for quantum computer vision tasks without succumbing to loss landscape concentration.",
-    "reason": "该论文主要研究量子卷积神经网络（QCNN）在量子机器学习及图像分类中的优化（解决梯度消失问题），属于量子计算与计算机视觉交叉领域。这与您关注的 LLM 训练数据选择（Data Selection）或投机采样（Speculative Decoding）等大模型推理加速方向完全不相关。",
-    "score_data": {
-      "title": "Beyond Barren Plateaus: A Scalable Quantum Convolutional Architecture for High-Fidelity Image Classification",
-      "authors": "Radhakrishnan Delhibabu",
-      "source": "arXiv cs.LG",
-      "date": "2026-03-14 12:00:00",
-      "url": "https://arxiv.org/abs/2603.11131",
-      "has_code": false,
-      "score": 1,
-      "domain_id": "general",
-      "abstract": "arXiv:2603.11131v1 Announce Type: new \nAbstract: While Quantum Convolutional Neural Networks (QCNNs) offer a theoretical paradigm for quantum machine learning, their practical implementation is severely bottlenecked by barren plateaus -- the exponential vanishing of gradients -- and poor empirical accuracy compared to classical counterparts. In this work, we propose a novel QCNN architecture utilizing localized cost functions and a hardware-efficient tensor-network initialization strategy to provably mitigate barren plateaus. We evaluate our scalable QCNN on the MNIST dataset, demonstrating a significant performance leap. By resolving the gradient vanishing issue, our optimized QCNN achieves a classification accuracy of 98.7\\%, a substantial improvement over the baseline QCNN accuracy of 52.32\\% found in unmitigated models. Furthermore, we provide empirical evidence of a parameter-efficiency advantage, requiring $\\mathcal{O}(\\log N)$ fewer trainable parameters than equivalent classical CNNs to achieve $>95\\%$ convergence. This work bridges the gap between theoretical quantum utility and practical application, providing a scalable framework for quantum computer vision tasks without succumbing to loss landscape concentration.",
-      "reason": "该论文主要研究量子卷积神经网络（QCNN）在量子机器学习及图像分类中的优化（解决梯度消失问题），属于量子计算与计算机视觉交叉领域。这与您关注的 LLM 训练数据选择（Data Selection）或投机采样（Speculative Decoding）等大模型推理加速方向完全不相关。"
-    }
+    "reason": "该论文专注于量子卷积神经网络（QCNN）在量子机器学习和图像分类中的应用，主要解决梯度消失（Barren Plateaus）问题。这与您关注的 LLM 数据选择（llm-data-selection）以及投机解码（speculative-decoding）方向完全不相关。"
   },
   {
     "title": "Scaling Reasoning Efficiently via Relaxed On-Policy Distillation",
@@ -79,12 +19,10 @@
     "url": "https://arxiv.org/abs/2603.11137",
     "has_code": false,
     "score": 2,
-    "domain_id": "llm-data-selection",
+    "domain_id": "general",
     "abstract": "arXiv:2603.11137v1 Announce Type: new \nAbstract: On-policy distillation is pivotal for transferring reasoning capabilities to capacity-constrained models, yet remains prone to instability and negative transfer. We show that on-policy distillation can be interpreted, both theoretically and empirically, as a form of policy optimization, where the teacher-student log-likelihood ratio acts as a token reward. From this insight, we introduce REOPOLD (Relaxed On-Policy Distillation) a framework that stabilizes optimization by relaxing the strict imitation constraints of standard on-policy distillation. Specifically, REOPOLD temperately and selectively leverages rewards from the teacher through mixture-based reward clipping, entropy-based token-level dynamic sampling, and a unified exploration-to-refinement training strategy. Empirically, REOPOLD surpasses its baselines with superior sample efficiency during training and enhanced test-time scaling at inference, across mathematical, visual, and agentic tool-use reasoning tasks. Specifically, REOPOLD outperforms recent RL approaches achieving 6.7~12x greater sample efficiency and enables a 7B student to match a 32B teacher in visual reasoning with a ~3.32x inference speedup.",
-    "reason": "该论文的核心贡献是 REOPOLD 框架，通过放松在线蒸馏（On-policy Distillation）的约束来提升推理能力的迁移效率。虽然文中提到的“token-level dynamic sampling”在逻辑上与数据选择（data selection）有一定的相关性，且 3.32x 的推理加速也符合“快解码”的目标，但其核心方法论属于强化学习与模型蒸馏，并非您研究方向中特定的投机采样（Speculative Decoding）技术或大规模预训练数据清洗技术。建议作为提升推理模型训练效率的参考资料。",
-    "score_data": {
-      "abstract_zh": "同策蒸馏（On-policy distillation）对于将推理能力转移到容量受限的模型至关重要，但它仍然容易出现不稳定和负迁移的问题。我们从理论和实证两方面证明，同策蒸馏可以被解释为一种策略优化形式，其中教师与学生的对数似然比充当了令牌奖励。基于这一发现，我们提出了 REOPOLD（松弛同策蒸馏）框架，通过放宽标准同策蒸馏的严格模仿约束来稳定优化过程。具体而言，REOPOLD 通过基于混合的奖励裁剪、基于熵的令牌级动态采样以及统一的“从探索到精炼”训练策略，适度且有选择地利用来自教师的奖励。实验结果表明，在数学、视觉和智能体工具使用推理任务中，REOPOLD 的表现优于基准方法，在训练期间具有卓越的样本效率，并在推理时增强了测试时间扩展能力。特别地，REOPOLD 的样本效率比最近的强化学习方法高出 6.7~12 倍，并使 7B 参数的学生模型在视觉推理任务中达到了 32B 教师模型的水平，同时实现了约 3.32 倍的推理加速。"
-    }
+    "reason": "该论文主要关注大模型的推理能力蒸馏（On-Policy Distillation）与强化学习优化（REOPOLD 框架），虽然涉及训练策略和样本效率，但其核心技术路径（混合奖励剪裁、动态采样）与您定义的 'LLM data selection'（侧重数据清洗、去重、课程学习等）和 'Speculative decoding'（侧重加速推理的解码架构）核心关注点匹配度较低，属于大模型训练优化的大领域但非您的特定子方向。",
+    "abstract_zh": "策略内蒸馏对于将推理能力转移至参数规模受限的模型至关重要，但该方法往往面临不稳定和负迁移的问题。我们通过理论分析与实证研究证明，策略内蒸馏可以被视为一种策略优化形式，其中教师与学生模型的对数似然比扮演了 Token 奖励的角色。基于这一发现，我们提出了 REOPOLD（松弛策略内蒸馏）框架，该框架通过放宽标准策略内蒸馏中严格的模仿约束来提升优化稳定性。具体而言，REOPOLD 采用基于混合的奖励裁剪、基于熵的 Token 级动态采样以及统一的“从探索到精细化”训练策略，从而适度且有针对性地利用教师模型的奖励。实验结果表明，在数学、视觉及智能体工具调用等推理任务中，REOPOLD 的训练样本效率优于基准方法，且在推理阶段表现出更强的扩展性。特别是，REOPOLD 的样本效率比近期的强化学习方法高出 6.7 至 12 倍，并能让 7B 参数的学生模型在视觉推理任务中达到 32B 教师模型的水平，同时实现约 3.32 倍的推理加速。"
   },
   {
     "title": "H2LooP Spark Preview: Continual Pretraining of Large Language Models for Low-Level Embedded Systems Code",
@@ -96,12 +34,10 @@
     "score": 3,
     "domain_id": "llm-data-selection",
     "abstract": "arXiv:2603.11139v1 Announce Type: new \nAbstract: Large language models (LLMs) demonstrate strong code generation abilities in general-purpose programming languages but remain limited in specialized domains such as low-level embedded systems programming. This domain involves hardware register manipulation, vendor-specific SDKs, real-time operating system APIs, and hardware abstraction layers that are underrepresented in standard pretraining corpora. We introduce H2LooP Spark Preview, a continual pretraining (CPT) pipeline that adapts the OLMo-3-7B-a fully open language model to the embedded systems domain using BF16 LoRA with rank-stabilized scaling on 8 NVIDIA H100 GPUs. Our training corpus is constructed from repository-datasheet pairs covering 100B tokens of raw embedded systems data across 117 manufacturers, processed using the hierarchical datasheet-to-code mapping approach proposed in SpecMap (Nipane et al., 2026). The resulting curated dataset split contains 23.5B tokens across 13 embedded domains. Continual pretraining with high-rank LoRA (r=512) yields substantial gains, reducing in-domain perplexity by 70.4% and held-out repository perplexity by 66.1%. On generative code completion benchmarks spanning 13 embedded domains, our 7B model outperforms Claude Opus 4.6 and Qwen3-Coder-30B on 8 categories in token accuracy, showing that targeted continual pretraining enables smaller open-weight models to rival frontier systems on specialized technical tasks. We release the production training checkpoint on Huggingface as an open-source artifact.",
-    "reason": "该论文主要关注嵌入式系统代码的领域增量预训练（CPT），其中涉及了针对特定领域的数据策展（Data Curation）和数据映射方法（SpecMap），这与您的“LLM training: data selection”方向中的数据策展和数据质量相关。虽然其核心贡献更偏向于领域适配应用而非通用的数据选择算法创新，但其构建高质量领域数据集的过程对研究数据筛选具有一定的参考价值。",
-    "score_data": {
-      "abstract_zh": "大型语言模型（LLMs）在通用编程语言方面表现出强大的代码生成能力，但在低层嵌入式系统编程等专门领域仍然受限。该领域涉及硬件寄存器操作、供应商特定的 SDK、实时操作系统 API 以及在标准预训练语料库中代表性不足的硬件抽象层。我们推出了 H2LooP Spark Preview，这是一个持续预训练（CPT）流水线，它使用带有秩稳定缩放（rank-stabilized scaling）的 BF16 LoRA，在 8 台 NVIDIA H100 GPU 上将全开源语言模型 OLMo-3-7B 适配到嵌入式系统领域。我们的训练语料库由涵盖 117 家制造商、1000 亿标记的原始嵌入式系统数据的仓库-数据手册对构建，并采用了 SpecMap 提出的分层数据手册到代码映射方法进行处理。最终精选的数据集切片包含跨 13 个嵌入式领域的 235 亿个标记。使用高秩 LoRA（r=512）进行的持续预训练取得了显著收益，使域内困惑度降低了 70.4%。在涵盖 13 个嵌入式领域的生成式代码补全基准测试中，我们的 7B 模型在 8 个类别上超过了 Claude Opus 4.6 和 Qwen3-Coder-30B，证明了针对性的持续预训练能让较小的开源模型在专门技术任务上媲美前沿系统。我们将生产训练检查点作为开源成果发布在 Huggingface 上。",
-      "core_contribution": "该研究提出了一种名为 H2LooP Spark Preview 的持续预训练流水线，通过构建大规模嵌入式领域专有的“仓库-数据手册”关联数据集并结合高秩 LoRA 技术，显著提升了 7B 参数模型在低层嵌入式代码生成任务上的专业表现。",
-      "app_value_score": 5
-    }
+    "reason": "该论文主要关注持续预训练（Continual Pretraining）在嵌入式系统领域的应用。虽然其核心目标是领域适配，但论文中提到的“data curation”（数据清洗/策展）和构建特定训练语料库的方法（如 datasheet-to-code mapping）与您研究方向中的“data selection”和“data curation”有一定的相关性。不过，该论文更偏向于特定领域的工程实现，而非通用数据选择算法的研究。",
+    "abstract_zh": "大型语言模型（LLM）虽然在通用编程语言的代码生成方面表现出色，但在涉及硬件寄存器操作、厂商特定 SDK、RTOS API 及硬件抽象层等低级嵌入式系统编程领域仍面临局限，而这些内容在标准预训练语料库中代表性不足。为此，我们推出了 H2LooP Spark Preview，这是一套持续预训练（CPT）流水线，通过在 8 台 NVIDIA H100 GPU 上采用带秩稳定缩放的 BF16 LoRA 技术，使完全开源的 OLMo-3-7B 模型成功适配嵌入式领域。我们构建了一个包含 1000 亿 token 原始数据的“库-数据表对”语料库，涵盖 117 家厂商，并利用 SpecMap 提出的分层数据表到代码映射方法进行处理，最终精选出跨 13 个嵌入式领域的 235 亿 token 数据集。实验表明，使用高秩 LoRA（r=512）进行的持续预训练效果显著，将域内困惑度降低了 70.4%，留存库困惑度降低了 66.1%。在跨 13 个嵌入式领域的生成式代码补全基准测试中，该 7B 模型在 8 个类别上的 token 准确率超越了 Claude Opus 4.6 和 Qwen3-Coder-30B，证明了针对性的持续预训练能让小型开源权重模型在专业技术任务中媲美前沿系统。该生产级训练检查点已作为开源工件发布在 Huggingface 上。",
+    "core_contribution": "该研究提出了 H2LooP Spark Preview 持续预训练流水线，通过分层映射方法构建大规模专业语料库，并利用高秩 LoRA 使 7B 开源模型在低级嵌入式编程性能上超越了顶级闭源前沿模型。",
+    "app_value_score": 5
   },
   {
     "title": "Procedural Fairness via Group Counterfactual Explanation",
@@ -113,19 +49,7 @@
     "score": 1,
     "domain_id": "general",
     "abstract": "arXiv:2603.11140v1 Announce Type: new \nAbstract: Fairness in machine learning research has largely focused on outcome-oriented fairness criteria such as Equalized Odds, while comparatively less attention has been given to procedural-oriented fairness, which addresses how a model arrives at its predictions. Neglecting procedural fairness means it is possible for a model to generate different explanations for different protected groups, thereby eroding trust. In this work, we introduce Group Counterfactual Integrated Gradients (GCIG), an in-processing regularization framework that enforces explanation invariance across groups, conditioned on the true label. For each input, GCIG computes explanations relative to multiple Group Conditional baselines and penalizes cross-group variation in these attributions during training. GCIG formalizes procedural fairness as Group Counterfactual explanation stability and complements existing fairness objectives that constrain predictions alone. We compared GCIG empirically against six state-of-the-art methods, and the results show that GCIG substantially reduces cross-group explanation disparity while maintaining competitive predictive performance and accuracy-fairness trade-offs. Our results also show that aligning model reasoning across groups offers a principled and practical avenue for advancing fairness beyond outcome parity.",
-    "reason": "该论文主要研究机器学习中的程序公平性（Procedural Fairness）和群体反事实解释（Group Counterfactual Explanation），提出了一种名为 GCIG 的正则化框架来减少不同群体间的解释偏差。虽然涉及模型训练优化，但其核心应用场景是公平性研究，与您关注的 LLM 数据选择（Data Selection）或投机采样（Speculative Decoding）两个具体领域均无直接相关性。",
-    "score_data": {
-      "title": "Procedural Fairness via Group Counterfactual Explanation",
-      "authors": "Gideon Popoola, John Sheppard",
-      "source": "arXiv cs.LG",
-      "date": "2026-03-14 12:00:00",
-      "url": "https://arxiv.org/abs/2603.11140",
-      "has_code": false,
-      "score": 1,
-      "domain_id": "general",
-      "abstract": "arXiv:2603.11140v1 Announce Type: new \nAbstract: Fairness in machine learning research has largely focused on outcome-oriented fairness criteria such as Equalized Odds, while comparatively less attention has been given to procedural-oriented fairness, which addresses how a model arrives at its predictions. Neglecting procedural fairness means it is possible for a model to generate different explanations for different protected groups, thereby eroding trust. In this work, we introduce Group Counterfactual Integrated Gradients (GCIG), an in-processing regularization framework that enforces explanation invariance across groups, conditioned on the true label. For each input, GCIG computes explanations relative to multiple Group Conditional baselines and penalizes cross-group variation in these attributions during training. GCIG formalizes procedural fairness as Group Counterfactual explanation stability and complements existing fairness objectives that constrain predictions alone. We compared GCIG empirically against six state-of-the-art methods, and the results show that GCIG substantially reduces cross-group explanation disparity while maintaining competitive predictive performance and accuracy-fairness trade-offs. Our results also show that aligning model reasoning across groups offers a principled and practical avenue for advancing fairness beyond outcome parity.",
-      "reason": "该论文主要研究机器学习中的程序公平性（Procedural Fairness）和群体反事实解释（Group Counterfactual Explanation），提出了一种名为 GCIG 的正则化框架来减少不同群体间的解释偏差。虽然涉及模型训练优化，但其核心应用场景是公平性研究，与您关注的 LLM 数据选择（Data Selection）或投机采样（Speculative Decoding）两个具体领域均无直接相关性。"
-    }
+    "reason": "该论文的研究主题是机器学习中的公平性（Procedural Fairness）和归因解释方法（Group Counterfactual Integrated Gradients），与您提供的“LLM训练：数据选择”或“投机解码”两个研究方向均无直接关联。虽然涉及归因技术，但其应用场景是公平性正则化而非数据筛选或推理加速。"
   },
   {
     "title": "Bayesian Optimization of Partially Known Systems using Hybrid Models",
@@ -137,18 +61,6 @@
     "score": 1,
     "domain_id": "general",
     "abstract": "arXiv:2603.11199v1 Announce Type: new \nAbstract: Bayesian optimization (BO) has gained attention as an efficient algorithm for black-box optimization of expensive-to-evaluate systems, where the BO algorithm iteratively queries the system and suggests new trials based on a probabilistic model fitted to previous samples. Still, the standard BO loop may require a prohibitively large number of experiments to converge to the optimum, especially for high-dimensional and nonlinear systems. We present a hybrid model-based BO formulation that combines the iterative Bayesian learning of BO with partially known mechanistic physical models. Instead of learning a direct mapping from inputs to the objective, we write all known equations for a physics-based model and infer expressions for variables missing equations using a probabilistic model, in our case, a Gaussian process (GP). The final formulation then includes the GP as a constraint in the hybrid model, thereby allowing other physics-based nonlinear and implicit model constraints. This hybrid model formulation yields a constrained, nonlinear stochastic program, which we discretize using the sample-average approximation. In an in-silico optimization of a single-stage distillation, the hybrid BO model based on mass conservation laws yields significantly better designs than a standard BO loop. Furthermore, the hybrid model converges in as few as one iteration, depending on the initial samples, whereas, the standard BO does not converge within 25 for any of the seeds. Overall, the proposed hybrid BO scheme presents a promising optimization method for partially known systems, leveraging the strengths of both mechanistic modeling and data-driven optimization.",
-    "reason": "该论文主要探讨针对物理系统（如单级蒸馏过程）的混合贝叶斯优化（BO）方法，核心在于将物理机制方程与高斯过程结合。这与您关注的 LLM 训练数据选择或投机解码两个研究方向完全不相关。",
-    "score_data": {
-      "title": "Bayesian Optimization of Partially Known Systems using Hybrid Models",
-      "authors": "Eike Cramer, Luis Kutschat, Oliver Stollenwerk, Joel A. Paulson, Alexander Mitsos",
-      "source": "arXiv cs.LG",
-      "date": "2026-03-14 12:00:00",
-      "url": "https://arxiv.org/abs/2603.11199",
-      "has_code": false,
-      "score": 1,
-      "domain_id": "general",
-      "abstract": "arXiv:2603.11199v1 Announce Type: new \nAbstract: Bayesian optimization (BO) has gained attention as an efficient algorithm for black-box optimization of expensive-to-evaluate systems, where the BO algorithm iteratively queries the system and suggests new trials based on a probabilistic model fitted to previous samples. Still, the standard BO loop may require a prohibitively large number of experiments to converge to the optimum, especially for high-dimensional and nonlinear systems. We present a hybrid model-based BO formulation that combines the iterative Bayesian learning of BO with partially known mechanistic physical models. Instead of learning a direct mapping from inputs to the objective, we write all known equations for a physics-based model and infer expressions for variables missing equations using a probabilistic model, in our case, a Gaussian process (GP). The final formulation then includes the GP as a constraint in the hybrid model, thereby allowing other physics-based nonlinear and implicit model constraints. This hybrid model formulation yields a constrained, nonlinear stochastic program, which we discretize using the sample-average approximation. In an in-silico optimization of a single-stage distillation, the hybrid BO model based on mass conservation laws yields significantly better designs than a standard BO loop. Furthermore, the hybrid model converges in as few as one iteration, depending on the initial samples, whereas, the standard BO does not converge within 25 for any of the seeds. Overall, the proposed hybrid BO scheme presents a promising optimization method for partially known systems, leveraging the strengths of both mechanistic modeling and data-driven optimization.",
-      "reason": "该论文主要探讨针对物理系统（如单级蒸馏过程）的混合贝叶斯优化（BO）方法，核心在于将物理机制方程与高斯过程结合。这与您关注的 LLM 训练数据选择或投机解码两个研究方向完全不相关。"
-    }
+    "reason": "该论文主要研究如何将贝叶斯优化（BO）与物理机理模型结合，以解决物理系统（如蒸馏过程）的优化问题。这与您关注的 LLM 数据选择（数据清洗、课程学习等）以及投机解码（加速推理）两个研究方向均无直接关联，相关性很低。"
   }
 ]

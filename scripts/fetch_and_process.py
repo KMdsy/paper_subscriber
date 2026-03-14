@@ -177,8 +177,9 @@ def generate_abstract_zh(title, abstract):
 '''
     return call_gemini_json(prompt)
 
-def render_paper(meta, score_data, abstract_zh, last_update_time_dt):
+def render_paper(meta, last_update_time_dt):
     score = meta["score"]
+    abstract_zh = meta.get('abstract_zh', 'N/A')
     
     def to_str(val):
         if isinstance(val, list): return "\n".join([f"- {i}" for i in val])
@@ -187,30 +188,30 @@ def render_paper(meta, score_data, abstract_zh, last_update_time_dt):
     if score in [5, 4]:
         tpl_path = Path("templates/deep_dive.md.tpl")
         tpl = tpl_path.read_text(encoding="utf-8")
-        s = tpl.replace("{{method_highlights}}", to_str(score_data.get("method_highlights", ""))) \
-               .replace("{{experiment_highlights}}", to_str(score_data.get("experiment_highlights", ""))) \
-               .replace("{{pros}}", to_str(score_data.get("pros", ""))) \
-               .replace("{{cons}}", to_str(score_data.get("cons", ""))) \
-               .replace("{{reproducibility}}", to_str(score_data.get("reproducibility", ""))) \
-               .replace("{{task_list}}", to_str(score_data.get("task_list", ""))) \
+        s = tpl.replace("{{method_highlights}}", to_str(meta.get("method_highlights", ""))) \
+               .replace("{{experiment_highlights}}", to_str(meta.get("experiment_highlights", ""))) \
+               .replace("{{pros}}", to_str(meta.get("pros", ""))) \
+               .replace("{{cons}}", to_str(meta.get("cons", ""))) \
+               .replace("{{reproducibility}}", to_str(meta.get("reproducibility", ""))) \
+               .replace("{{task_list}}", to_str(meta.get("task_list", ""))) \
                .replace("{{abstract_zh}}", abstract_zh or "Translation Failed") \
-               .replace("{{abstract_en}}", meta["abstract"])
+               .replace("{{abstract}}", meta["abstract"])
     elif score in [3]:
         tpl_path = Path("templates/quick_read.md.tpl")
         tpl = tpl_path.read_text(encoding="utf-8")
-        s = tpl.replace("{{core_contribution}}", to_str(score_data.get("core_contribution", ""))) \
-               .replace("{{app_value_score}}", str(score_data.get("app_value_score", 0))) \
+        s = tpl.replace("{{core_contribution}}", to_str(meta.get("core_contribution", ""))) \
+               .replace("{{app_value_score}}", str(meta.get("app_value_score", 0))) \
                .replace("{{abstract_zh}}", abstract_zh or "Translation Failed") \
-               .replace("{{abstract_en}}", meta["abstract"])
+               .replace("{{abstract}}", meta["abstract"])
     elif score in [2]:
         tpl_path = Path("templates/base.md.tpl")
         tpl = tpl_path.read_text(encoding="utf-8")
         s = tpl.replace("{{abstract_zh}}", abstract_zh or "Translation Failed") \
-               .replace("{{abstract_en}}", meta["abstract"])
+               .replace("{{abstract}}", meta["abstract"])
     else:
         tpl_path = Path("templates/plain.md.tpl")
         tpl = tpl_path.read_text(encoding="utf-8")
-        s = tpl.replace("{{abstract_en}}", meta["abstract"])
+        s = tpl.replace("{{abstract}}", meta["abstract"])
 
     
     s = s.replace("{{title}}", meta["title"]) \
@@ -238,23 +239,20 @@ def process_paper(p, domains_context, last_update_time_dt):
     if p["score"] in [5, 4]:
         print(f"Final Score: {p['score']} | Processing content...")
         score_data = generate_deep_dive(p["title"], p["abstract"]) or {}
-        abstract_zh = score_data.get("abstract_zh")
     elif p["score"] in [3]:
         print(f"Final Score: {p['score']} | Processing content...")
         score_data = generate_quick_read(p["title"], p["abstract"]) or {}
-        abstract_zh = score_data.get("abstract_zh")
     elif p["score"] in [2]:
         print(f"Final Score: {p['score']} | Processing content...")
         score_data = generate_abstract_zh(p["title"], p["abstract"]) or {}
-        abstract_zh = score_data.get("abstract_zh")
     else:
         print(f"Final Score: {p['score']} | Skip processing content.")
-        score_data = p.copy()
-        abstract_zh = None
 
-    p["score_data"] = score_data # 保存到 JSON
+    # 保存到 JSON
+    for k in score_data.keys():
+        p[k] = score_data[k] # 将深度解析的内容覆盖之前的字段，方便后续使用，包含 abstract_zh、abstract 和其他细化信息
         
-    content = render_paper(p, score_data, abstract_zh, last_update_time_dt)
+    content = render_paper(p, last_update_time_dt)
     domain_dir = VAULT_PATH / p["domain_id"]
     domain_dir.mkdir(parents=True, exist_ok=True)
     safe_title = re.sub(r"[\\/:*?\"<>|]", "_", p["url"].split("/")[-1])
@@ -263,7 +261,7 @@ def process_paper(p, domains_context, last_update_time_dt):
     fname.write_text(content, encoding="utf-8")
     return p
 
-def save_to_json(papers, is_incremental=False):
+def save_to_json(papers):
     """
     保存论文数据到 JSON 文件
     Args:
@@ -272,27 +270,12 @@ def save_to_json(papers, is_incremental=False):
     """
     json_path = Path("docs/data.json")
     json_path.parent.mkdir(parents=True, exist_ok=True)
-    existing_data = []
-    
-    if json_path.exists():
-        try: 
-            existing_data = json.loads(json_path.read_text(encoding="utf-8"))
-        except: 
-            pass
-        
-    # 合并数据：去重并保留最新版本
-    seen_urls = {p["url"] for p in papers}
-    new_data = [p for p in existing_data if p["url"] not in seen_urls]
-    new_data.extend(papers)
-    new_data = sorted(new_data, key=lambda x: x["date"], reverse=True)
+    new_data = sorted(papers, key=lambda x: x["date"], reverse=True)
     
     # 写入文件
     json_path.write_text(json.dumps(new_data, ensure_ascii=False, indent=2), encoding="utf-8")
     
-    if is_incremental:
-        print(f"Incremental save completed: {len(papers)} papers")
-    else:
-        print(f"Full save completed: {len(new_data)} total papers")
+    print(f"Full save completed: {len(new_data)} total papers")
 
 def main():
     domains_context = "Domain with keywords:\n" + "\n".join([f"- {d['name']} (domain_id: {d['id']}): {', '.join(d['keywords'])}" for d in domains])
@@ -316,7 +299,7 @@ def main():
     existing_papers = []
     if json_path.exists():
         try:
-            backup_path = json_path.parent / f"data_{datetime.now(UTC8).strftime('%Y-%m-%d_%H-%M-%S')}.json.backup"
+            backup_path = json_path.parent / f"data_{datetime.now(UTC8).strftime('%Y-%m-%d_%H-%M-%S')}.backup.json"
             backup_path.write_text(json_path.read_text(encoding="utf-8"), encoding="utf-8")
             print(f"Backup created: {backup_path.name}")
             existing_papers = json.loads(json_path.read_text(encoding="utf-8"))
@@ -326,7 +309,6 @@ def main():
 
     new_last_update_time_dt = datetime.now(timezone.utc)
     
-    his_raw = []
     for src in sources:
         print(f"Fetching {src['name']}...")
         feed = feedparser.parse(src["url"])
@@ -343,7 +325,6 @@ def main():
 
             # 如果 URL 已存在且已经有中文摘要，则跳过抓取
             if url in existing_urls and "abstract_zh" in existing_urls[url] and existing_urls[url]["abstract_zh"]:
-                his_raw.append(existing_urls[url]) # 后续放在报告里，但不重复抓取和处理
                 continue
 
             title = entry.get("title", "")
@@ -383,16 +364,15 @@ def main():
             if res: 
                 processed_list.append(res)
                 # 每处理一篇论文就保存一次，避免崩溃丢失数据
-                save_to_json(processed_list + his_raw, is_incremental=True)
-                print(f"✓ Paper {i+1}/{len(all_raw)} saved: {p['title'][:50]}...")
+                save_to_json(processed_list)
+                print(f"✅ Paper {i+1}/{len(all_raw)} saved: {p['title'][:50]}...")
         except Exception as e:
-            print(f"✗ Failed to process paper {i+1}: {p['title'][:50]}... Error: {str(e)}")
+            print(f"❌ Failed to process paper {i+1}: {p['title'][:50]}... Error: {str(e)}")
             continue
         time.sleep(1) # 避免过快调用 Gemini 导致失败
     
     # 最终保存（实际上已经在循环中保存了，这里是确保）
-    all_list = processed_list + his_raw
-    save_to_json(all_list, is_incremental=False)  # 全量保存，创建备份
+    save_to_json(processed_list)  # 全量保存，创建备份
     
     # 更新并持久化最近更新时间
     save_state(new_last_update_time_dt.isoformat())

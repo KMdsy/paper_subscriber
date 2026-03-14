@@ -17,7 +17,7 @@ type: "Quick Read"
 {{abstract_zh}}
 
 ## 英文摘要
-{{abstract_en}}
+{{abstract}}
 
 ---
 更新时间：{{last_update_time}}

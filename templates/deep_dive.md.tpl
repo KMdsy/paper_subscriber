@@ -14,7 +14,7 @@ type: "Deep Dive"
 {{abstract_zh}}
 
 ## 英文摘要
-{{abstract_en}}
+{{abstract}}
 
 ## 💡 方法要点
 {{method_highlights}}
