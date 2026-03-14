@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """
 Advanced paper subscriber pipeline (v3):
-- Two-pass scoring (Heuristic -> Gemini Refined)
+- Two-pass scoring (Heuristic -> LLM Refined)
 - Differential templates (Deep-dive, Quick-read, Base, Plain(no translation))
-- Gemini-powered structural analysis and translation
+- LLM-powered structural analysis and translation
 """
-import os, sys, subprocess, json, yaml, feedparser, time, re, calendar
+import os, sys, subprocess, json, yaml, feedparser, time, re, calendar, uuid
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from tqdm import tqdm
+from utils import OpenRouterClient
+
+# Initialize OpenRouter Client
+or_client = OpenRouterClient()
+
 
 # CONFIG
 CONFIG_PATH = Path("config/fields.yaml")
@@ -60,25 +65,7 @@ def keyword_score(title, abstract, domain):
     matches = sum(1 for kw in kws if kw.lower() in text)
     return min(matches, 5) # 最多 5 分
 
-def call_gemini_json(prompt):
-    cmd = ["gemini", "--output-format", "json", prompt]
-    try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-        if res.returncode != 0: return None
-        full_out = json.loads(res.stdout.strip())
-        inner_text = full_out.get("response", "")
-        match = re.search(r'\{.*\}', inner_text, re.DOTALL)
-        return json.loads(match.group(0)) if match else None
-    except: return None
-
-def call_gemini_text(prompt):
-    cmd = ["gemini", prompt]
-    try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-        return res.stdout.strip() if res.returncode == 0 else ""
-    except: return ""
-
-def gemini_refine_score(title, abstract, domains_context):
+def llm_refine_score(title, abstract, domains_context):
     prompt = f'''你是你为研究助理。我会给你我的研究方向，请你为我给出的一篇论文及其摘要打个分数。并将该论文赋予一个领域标签（domain_id），如果我提供的列表中没有恰当的标签，请标注为 "general"。
 
 # 评分标准
@@ -106,9 +93,9 @@ def gemini_refine_score(title, abstract, domains_context):
 {{"score": int, "reason": "string", "domain_id": "string"}}
 ```
 '''
-    res = call_gemini_json(prompt)
-    if res and "score" in res: return res
-    return {"score": 1, "reason": "parsing error fallback", "domain_id": "general"}
+    res = or_client.call_json(prompt)
+    if res and "score" in res and "domain_id" in res: return res
+    return {"score": 1, "reason": "parsing error fallback", "domain_id": "general", "error": res.get("error", "unknown error")}
 
 def generate_deep_dive(title, abstract):
     prompt = f'''请作为一名资深科研助手，对下述论文进行深度解析（Deep Dive）。
@@ -134,7 +121,7 @@ def generate_deep_dive(title, abstract):
 - 必须使用中文回答。
 - 仅返回 JSON 本身，不要包含任何 Markdown 代码块标签或其他解释文字。
 '''
-    return call_gemini_json(prompt)
+    return or_client.call_json(prompt)
 
 def generate_quick_read(title, abstract):
     prompt = f'''请对下述论文进行快速摘要（Quick Summary），并翻译摘要为**中文**。
@@ -157,7 +144,7 @@ def generate_quick_read(title, abstract):
 - 必须使用中文回答。
 - 仅返回 JSON 本身，不要包含任何 Markdown 代码块标签或其他解释文字。
 '''
-    return call_gemini_json(prompt)
+    return or_client.call_json(prompt)
 
 def generate_abstract_zh(title, abstract):
     prompt = f'''请将以下论文摘要翻译成**中文**，要求准确传达原文信息，同时语言流畅自然。   
@@ -175,7 +162,7 @@ def generate_abstract_zh(title, abstract):
 {{"abstract_zh": "string"}}
 ```
 '''
-    return call_gemini_json(prompt)
+    return or_client.call_json(prompt)
 
 def render_paper(meta, last_update_time_dt):
     score = meta["score"]
@@ -221,18 +208,21 @@ def render_paper(meta, last_update_time_dt):
          .replace("{{url}}", meta["url"]) \
          .replace("{{has_code}}", str(meta["has_code"])) \
          .replace("{{score}}", str(score)) \
-         .replace("{{domain_id}}", meta["domain_id"]) \
-         .replace("{{reason}}", meta["reason"]) 
+         .replace("{{domain_id}}", meta.get("domain_id", "general")) \
+         .replace("{{reason}}", meta.get("reason", "N/A")) 
 
     s = s.replace("{{last_update_time}}", last_update_time_dt.astimezone(UTC8).strftime("%Y-%m-%d %H:%M:%S"))
     return s
 
 def process_paper(p, domains_context, last_update_time_dt):
     print(f"Refining: {p['title']}...")
-    ref = gemini_refine_score(p["title"], p["abstract"], domains_context) # 调用 Gemini 进行评分细化
+    ref = llm_refine_score(p["title"], p["abstract"], domains_context) # 调用 LLM 进行评分细化
     p["score"] = ref.get("score", 1)
     p["reason"] = ref.get("reason", "N/A")
     p["domain_id"] = ref.get("domain_id", "general")
+    if 'error' in ref:
+        print(f"⚠️ LLM refinement error for paper '{p['title']}': {ref['error']}")
+        p['error'] = ref['error'] # 将错误信息保存在 paper 数据中，方便后续分析
     if p["score"] == 0: return None
     
     score_data = {}
@@ -312,7 +302,7 @@ def main():
     for src in sources:
         print(f"Fetching {src['name']}...")
         feed = feedparser.parse(src["url"])
-        for entry in feed.entries[10:20]:  
+        for entry in feed.entries:  
             url = entry.get("link", "")
             
             # 时间过滤：只保留大于最近更新时间的文章
@@ -369,7 +359,7 @@ def main():
         except Exception as e:
             print(f"❌ Failed to process paper {i+1}: {p['title'][:50]}... Error: {str(e)}")
             continue
-        time.sleep(1) # 避免过快调用 Gemini 导致失败
+        time.sleep(1) # 1s 避免过快调用 LLM 导致失败
     
     # 最终保存（实际上已经在循环中保存了，这里是确保）
     save_to_json(processed_list)  # 全量保存，创建备份

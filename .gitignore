@@ -5,3 +5,5 @@ GEMINI.md
 *.log
 *.tmp
 __pycache__/
+tmp/
+.secret
