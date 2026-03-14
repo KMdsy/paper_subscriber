@@ -123,11 +123,15 @@ def process_paper(p, domains_context):
     
     print(f"Final Score: {p['score']} | Processing content...")
     abstract_zh = generate_abstract_zh(p["title"], p["abstract"])
+    p["abstract_zh"] = abstract_zh # 保存到 JSON
+    
     score_data = {}
     if p["score"] == 5:
         score_data = generate_deep_dive(p["title"], p["abstract"]) or {}
     elif p["score"] in [3, 4]:
         score_data = generate_quick_read(p["title"], p["abstract"]) or {}
+    
+    p["score_data"] = score_data # 保存到 JSON
         
     content = render_paper(p, score_data, abstract_zh)
     domain_dir = VAULT_PATH / p["domain_id"]

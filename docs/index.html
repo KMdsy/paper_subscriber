@@ -3,73 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paper Subscriber - 研究看板</title>
-    <!-- Vue 3 & Element Plus -->
+    <title>Paper Subscriber - 结构化看板</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/element-plus"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
     <style>
         body { background-color: #f5f7fa; font-family: -apple-system, sans-serif; }
         .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        .paper-card { margin-bottom: 20px; transition: transform 0.2s; }
-        .paper-card:hover { transform: translateY(-3px); }
-        .score-tag { font-weight: bold; }
-        .filter-bar { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05); }
+        .domain-section { margin-bottom: 40px; }
+        .domain-title { color: #303133; border-bottom: 2px solid #409EFF; padding-bottom: 10px; margin-bottom: 20px; }
+        .score-group { margin-left: 20px; margin-bottom: 20px; }
+        .score-title { color: #606266; margin-bottom: 15px; display: flex; align-items: center; }
+        .paper-card { margin-bottom: 15px; }
+        .abstract-zh { font-size: 14px; color: #333; line-height: 1.6; }
+        .abstract-en { font-size: 13px; color: #909399; margin-top: 10px; font-style: italic; }
+        .deep-dive-info { background: #fdf6ec; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 13px; }
     </style>
 </head>
 <body>
 <div id="app" class="container">
     <el-header style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #409EFF;">📚 Research Paper Dashboard</h1>
+        <h1 style="color: #409EFF;">📚 Research Paper Dashboard (Hierarchical)</h1>
     </el-header>
 
-    <div class="filter-bar">
-        <el-row :gutter="20">
-            <el-col :span="8">
-                <el-input v-model="search" placeholder="搜索关键词..." prefix-icon="Search"></el-input>
-            </el-col>
-            <el-col :span="6">
-                <el-select v-model="filterDomain" placeholder="研究领域" clearable style="width: 100%;">
-                    <el-option v-for="d in domains" :key="d" :label="d" :value="d"></el-option>
-                </el-select>
-            </el-col>
-            <el-col :span="6">
-                <el-select v-model="filterScore" placeholder="最低评分" clearable style="width: 100%;">
-                    <el-option v-for="s in [5,4,3,2,1]" :key="s" :label="s + '分'" :value="s"></el-option>
-                </el-select>
-            </el-col>
-            <el-col :span="4">
-                <el-button type="primary" @click="resetFilters" plain>重置</el-button>
-            </el-col>
-        </el-row>
+    <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px;">
+        <el-input v-model="search" placeholder="搜索关键词..." style="width: 300px;"></el-input>
+        <el-checkbox v-model="showAbstractEn">显示英文摘要</el-checkbox>
     </div>
 
-    <el-row :gutter="20">
-        <el-col v-for="paper in filteredPapers" :key="paper.url" :xs="24" :sm="12" :md="8">
-            <el-card class="paper-card" shadow="hover">
-                <template #header>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <el-link :href="paper.url" target="_blank" style="font-weight: bold; font-size: 16px;">
-                            {{ paper.title }}
-                        </el-link>
-                        <el-tag :type="getScoreType(paper.score)" class="score-tag">{{ paper.score }}</el-tag>
-                    </div>
-                </template>
-                <div style="font-size: 13px; color: #666; margin-bottom: 10px;">
-                    <p><strong>作者:</strong> {{ paper.authors }}</p>
-                    <p><strong>领域:</strong> {{ paper.domain_id }} | <strong>来源:</strong> {{ paper.source }}</p>
-                </div>
-                <div style="height: 100px; overflow: hidden; font-size: 14px; color: #333; line-height: 1.5;">
-                    {{ paper.abstract }}
-                </div>
-                <template #footer>
-                    <div style="text-align: right; font-size: 12px; color: #999;">
-                        {{ paper.date }}
-                    </div>
-                </template>
-            </el-card>
-        </el-col>
-    </el-row>
+    <!-- 领域分组渲染 -->
+    <div v-for="domain in groupedData" :key="domain.name" class="domain-section">
+        <h2 class="domain-title">📌 {{ domain.name }}</h2>
+        
+        <div v-for="scoreGroup in domain.scores" :key="scoreGroup.val" class="score-group">
+            <h3 class="score-title">
+                <el-tag :type="getScoreType(scoreGroup.val)" effect="dark" style="margin-right: 10px;">{{ scoreGroup.val }} 分</el-tag>
+                <span>论文数量: {{ scoreGroup.papers.length }}</span>
+            </h3>
+
+            <el-row :gutter="15">
+                <el-col v-for="paper in scoreGroup.papers" :key="paper.url" :span="24">
+                    <el-card class="paper-card" shadow="never">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <el-link :href="paper.url" target="_blank" type="primary" style="font-size: 16px; font-weight: bold;">
+                                {{ paper.title }}
+                            </el-link>
+                            <span style="font-size: 12px; color: #999;">{{ paper.date }}</span>
+                        </div>
+                        
+                        <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                            作者: {{ paper.authors }} | 来源: {{ paper.source }}
+                        </div>
+
+                        <!-- 核心贡献 (如果有) -->
+                        <div v-if="paper.score_data && paper.score_data.core_contribution" style="color: #E6A23C; font-weight: bold; margin-bottom: 10px;">
+                            核心贡献: {{ paper.score_data.core_contribution }}
+                        </div>
+
+                        <!-- 中文摘要 -->
+                        <div class="abstract-zh">
+                            {{ paper.abstract_zh || '中文摘要生成中...' }}
+                        </div>
+
+                        <!-- 折叠显示英文摘要 -->
+                        <el-collapse v-if="showAbstractEn" style="border: none; margin-top: 10px;">
+                            <el-collapse-item title="查看原始英文摘要" name="1">
+                                <div class="abstract-en">{{ paper.abstract }}</div>
+                            </el-collapse-item>
+                        </el-collapse>
+
+                        <!-- 5分论文深度展示 -->
+                        <div v-if="paper.score == 5 && paper.score_data" class="deep-dive-info">
+                            <p><strong>💡 方法:</strong> {{ paper.score_data.method_highlights }}</p>
+                            <p><strong>📊 实验:</strong> {{ paper.score_data.experiment_highlights }}</p>
+                            <p><strong>📝 任务清单:</strong> {{ paper.score_data.task_list }}</p>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -78,27 +91,12 @@
         setup() {
             const papers = ref([]);
             const search = ref('');
-            const filterDomain = ref('');
-            const filterScore = ref(null);
+            const showAbstractEn = ref(false);
 
             const fetchPapers = async () => {
-                try {
-                    const res = await fetch('data.json');
-                    papers.value = await res.json();
-                } catch (e) { console.error('Data not found', e); }
+                const res = await fetch('data.json');
+                papers.value = await res.json();
             };
-
-            const domains = computed(() => [...new Set(papers.value.map(p => p.domain_id))]);
-
-            const filteredPapers = computed(() => {
-                return papers.value.filter(p => {
-                    const matchSearch = p.title.toLowerCase().includes(search.value.toLowerCase()) || 
-                                       p.abstract.toLowerCase().includes(search.value.toLowerCase());
-                    const matchDomain = !filterDomain.value || p.domain_id === filterDomain.value;
-                    const matchScore = !filterScore.value || p.score >= filterScore.value;
-                    return matchSearch && matchDomain && matchScore;
-                });
-            });
 
             const getScoreType = (score) => {
                 if (score >= 5) return 'danger';
@@ -107,15 +105,35 @@
                 return 'info';
             };
 
-            const resetFilters = () => {
-                search.value = '';
-                filterDomain.value = '';
-                filterScore.value = null;
-            };
+            const groupedData = computed(() => {
+                // 1. 过滤
+                const filtered = papers.value.filter(p => 
+                    p.title.toLowerCase().includes(search.value.toLowerCase()) || 
+                    p.abstract.toLowerCase().includes(search.value.toLowerCase())
+                );
+
+                // 2. 领域分组
+                const groups = {};
+                filtered.forEach(p => {
+                    if (!groups[p.domain_id]) groups[p.domain_id] = {};
+                    if (!groups[p.domain_id][p.score]) groups[p.domain_id][p.score] = [];
+                    groups[p.domain_id][p.score].push(p);
+                });
+
+                // 3. 结构化成数组
+                return Object.keys(groups).map(domainName => ({
+                    name: domainName,
+                    scores: Object.keys(groups[domainName])
+                        .sort((a, b) => b - a) // 分数降序
+                        .map(score => ({
+                            val: parseInt(score),
+                            papers: groups[domainName][score]
+                        }))
+                }));
+            });
 
             onMounted(fetchPapers);
-
-            return { papers, search, filterDomain, filterScore, domains, filteredPapers, getScoreType, resetFilters };
+            return { search, showAbstractEn, groupedData, getScoreType };
         }
     }).use(ElementPlus).mount('#app');
 </script>

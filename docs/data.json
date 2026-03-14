@@ -1,5 +1,47 @@
 [
   {
+    "title": "Interventional Time Series Priors for Causal Foundation Models",
+    "authors": "Dennis Thumm, Ying Chen",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11090",
+    "has_code": false,
+    "score": 1,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11090v1 Announce Type: new \nAbstract: Prior-data fitted networks (PFNs) have emerged as powerful foundation models for tabular causal inference, yet their extension to time series remains limited by the absence of synthetic data generators that provide interventional targets. Existing time series benchmarks generate observational data with ground-truth causal graphs but lack the interventional data required for training causal foundation models. To address this, we propose \\textbf{CausalTimePrior}, a principled framework for generating synthetic temporal structural causal models (TSCMs) with paired observational and interventional time series. Our prior supports configurable causal graph structures, nonlinear autoregressive mechanisms, regime-switching dynamics, and multiple intervention types (hard, soft, time-varying). We demonstrate that PFNs trained on CausalTimePrior can perform in-context causal effect estimation on held-out TSCMs, establishing a pathway toward foundation models for time series causal inference.",
+    "reason": "The paper focuses on causal inference and synthetic data generation for time series foundation models. While it discusses foundation models and data priors, it does not address the specific interests of LLM training (data selection/curation for text), speculative decoding, or LLM-based reasoning/Chain-of-Thought.",
+    "abstract_zh": "标题：用于因果基础模型的干预性时间序列先验\n\n摘要：先验数据拟合网络（PFNs）已成为表格数据因果推理的强大基础模型，但由于缺乏提供干预目标的合成数据生成器，其在时间序列领域的扩展仍受到限制。现有的时间序列基准虽然能生成具有地面真值（ground-truth）因果图的观测数据，但缺乏训练因果基础模型所需的干预数据。为了解决这一问题，我们提出了 **CausalTimePrior**，这是一个用于生成带有成对观测和干预时间序列的合成时间结构因果模型（TSCMs）的原则性框架。我们的先验支持可配置的因果图结构、非线性自回归机制、机制切换（regime-switching）动力学以及多种干预类型（硬干预、软干预、时变干预）。我们证明了在 CausalTimePrior 上训练的 PFNs 能够对留出的 TSCMs 进行上下文因果效应估计，从而为时间序列因果推理的基础模型建立了一条路径。",
+    "score_data": {}
+  },
+  {
+    "title": "Learning Tree-Based Models with Gradient Descent",
+    "authors": "Sascha Marton",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11117",
+    "has_code": false,
+    "score": 1,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11117v1 Announce Type: new \nAbstract: Tree-based models are widely recognized for their interpretability and have proven effective in various application domains, particularly in high-stakes domains. However, learning decision trees (DTs) poses a significant challenge due to their combinatorial complexity and discrete, non-differentiable nature. As a result, traditional methods such as CART, which rely on greedy search procedures, remain the most widely used approaches. These methods make locally optimal decisions at each node, constraining the search space and often leading to suboptimal tree structures. Additionally, their demand for custom training methods precludes a seamless integration into modern machine learning (ML) approaches.\n  In this thesis, we propose a novel method for learning hard, axis-aligned DTs through gradient descent. Our approach utilizes backpropagation with a straight-through operator on a dense DT representation, enabling the joint optimization of all tree parameters, thereby addressing the two primary limitations of traditional DT algorithms. First, gradient-based training is not constrained by the sequential selection of locally optimal splits but, instead, jointly optimizes all tree parameters. Second, by leveraging gradient descent for optimization, our approach seamlessly integrates into existing ML approaches e.g., for multimodal and reinforcement learning tasks, which inherently rely on gradient descent.\n  These advancements allow us to achieve state-of-the-art results across multiple domains, including interpretable DTs rees for small tabular datasets, advanced models for complex tabular data, multimodal learning, and interpretable reinforcement learning without information loss. By bridging the gap between DTs and gradient-based optimization, our method significantly enhances the performance and applicability of tree-based models across various ML domains.",
+    "reason": "The paper focuses on optimization techniques for axis-aligned decision trees using gradient descent, targeting tabular data, multimodal learning, and reinforcement learning. It does not overlap with the specified topics of LLM data selection, speculative decoding, or LLM reasoning (CoT/Tree-of-Thoughts).",
+    "abstract_zh": "I will read `scripts/fetch_and_process.py` to understand the preferred translation style and format used in this project.\n**标题：基于梯度下降的树模型学习**\n\n**摘要：**\n树模型因其可解释性而广受认可，并已在各种应用领域（特别是高风险领域）被证明是有效的。然而，由于决策树（DTs）具有组合复杂性以及离散、不可微的特性，学习决策树面临着重大挑战。因此，依赖于贪婪搜索过程的传统方法（如 CART）仍然是应用最广泛的方法。这些方法在每个节点做出局部最优决策，限制了搜索空间，往往导致次优的树结构。此外，它们对自定义训练方法的需求阻碍了其与现代机器学习（ML）方法的无缝集成。\n\n在本论文中，我们提出了一种通过梯度下降学习硬、轴对齐决策树的新方法。我们的方法在稠密决策树表示上利用带有直通算子（straight-through operator）的反向传播，实现了所有树参数的联合优化，从而解决了传统决策树算法的两个主要局限。首先，基于梯度的训练不受局部最优划分顺序选择的限制，而是联合优化所有树参数。其次，通过利用梯度下降进行优化，我们的方法可以无缝集成到现有的机器学习方法中，例如固有的依赖梯度下降的多模态学习和强化学习任务。\n\n这些进展使我们能够在多个领域取得最先进（SOTA）的结果，包括针对小型表格数据集的可解释决策树、针对复杂表格数据的高级模型、多模态学习以及无信息损失的可解释强化学习。通过弥合决策树与基于梯度的优化之间的差距，我们的方法显著增强了树模型在各种机器学习领域的性能和适用性。",
+    "score_data": {}
+  },
+  {
+    "title": "High-resolution weather-guided surrogate modeling for data-efficient cross-location building energy prediction",
+    "authors": "Piragash Manmatharasan, Girma Bitsuamlak, Katarina Grolinger",
+    "source": "arXiv cs.LG",
+    "date": "Sat, 14 Mar 2026 00:00:00 -0400",
+    "url": "https://arxiv.org/abs/2603.11121",
+    "has_code": false,
+    "score": 1,
+    "domain_id": "general",
+    "abstract": "arXiv:2603.11121v1 Announce Type: new \nAbstract: Building design optimization often depends on physics-based simulation tools such as EnergyPlus, which, although accurate, are computationally expensive and slow. Surrogate models provide a faster alternative, yet most are location-specific, and even weather-informed variants require simulations from many sites to generalize to unseen locations. This limitation arises because existing methods do not fully exploit the short-term weather-driven energy patterns shared across regions, restricting their scalability and reusability. This study introduces a high-resolution (weekly) weather-informed surrogate modeling approach that enhances model reusability across locations. By capturing recurring short-term weather-energy demand patterns common to multiple regions, the proposed method produces a generalized surrogate that performs well beyond the training location. Unlike previous weather-informed approaches, it does not require extensive simulations from multiple sites to achieve strong generalization. Experimental results show that when trained on a single location, the model maintains high predictive accuracy for other sites within the same climate zone, with no noticeable performance loss, and exhibits only minimal degradation when applied across different climate zones. These findings demonstrate the potential of climate-informed generalization for developing scalable and reusable surrogate models, supporting more sustainable and optimized building design practices.",
+    "reason": "parsing error fallback",
+    "abstract_zh": "**标题：** 高分辨率天气引导的代理模型，用于数据高效的跨位置建筑能源预测。\n\n**摘要：** 建筑设计优化通常依赖于基于物理的模拟工具（如 EnergyPlus），虽然这些工具很准确，但计算成本高且速度慢。代理模型提供了一种更快的替代方案，但大多数模型是针对特定位置的，即使是考虑天气的变体也需要来自多个地点的模拟才能泛化到未见过的位置。这种局限性是因为现有方法没有充分利用各地区共有的短期天气驱动的能源模式，从而限制了它们的可扩展性和可重用性。本研究引入了一种高分辨率（每周）的天气感知代理建模方法，增强了模型在不同位置的可重用性。通过捕捉多个地区共有的循环短期天气-能源需求模式，所提出的方法生成了一个通用的代理模型，其性能表现远超其训练位置。与以往的天气感知方法不同，它不需要来自多个地点的大量模拟即可实现强大的泛化能力。实验结果表明，当在单个位置进行训练时，该模型对同一气候区内的其他地点保持了极高的预测准确性，且没有明显的性能损失；即使应用于不同的气候区，也仅表现出极小的性能下降。这些发现证明了气候感知泛化在开发可扩展且可重用的代理模型方面的潜力，为更可持续和更优化的建筑设计实践提供了支持。",
+    "score_data": {}
+  },
+  {
     "title": "Speculative Decoding Scaling Laws (SDSL): Throughput Optimization Made Simple",
     "authors": "Amirhossein Bozorgkhoo, Igor Molybog",
     "source": "arXiv cs.CL",
@@ -34,42 +76,6 @@
     "domain_id": "general",
     "abstract": "arXiv:2603.11254v1 Announce Type: new \nAbstract: Recent advancements of the Artificial Intelligence (AI) have led to the development of large language models (LLMs) that are capable of understanding, analysing, and creating textual data. These language models open a significant opportunity in analyzing the literature and more specifically poetry. In the present work, we employ multiple Bidirectional encoder representations from transformers (BERT) and Generative Pre-trained Transformer (GPT) based language models to analyze the works of two prominent Persian poets: Jalal al-Din Muhammad Rumi (Rumi) and Parvin E'tesami. The main objective of this research is to investigate the capability of the modern language models in grasping complexities of the Persian poetry and explore potential correlations between the poems' sentiment and their meters. Our findings in this study indicates that GPT4o language model can reliably be used in analysis of Persian poetry. Furthermore, the results of our sentiment analysis revealed that in general, Rumi's poems express happier sentiments compared to Parvin E'tesami's poems. Furthermore, comparing the utilization of poetic meters highlighted Rumi's poems superiority in using meters to express a wider variety of sentiments. These findings are significant as they confirm that LLMs can be effectively applied in conducting computer-based semantic studies, where human interpretations are not required, and thereby significantly reducing potential biases in the analysis.",
     "reason": "The paper focuses on the application of LLMs (GPT-4o, BERT) for sentiment analysis and meter correlation in Persian poetry. It does not address LLM training (data selection/curation), speculative decoding, or LLM reasoning/CoT techniques, which are the primary areas of interest defined in the context."
-  },
-  {
-    "title": "Interventional Time Series Priors for Causal Foundation Models",
-    "authors": "Dennis Thumm, Ying Chen",
-    "source": "arXiv cs.LG",
-    "date": "Fri, 13 Mar 2026 00:00:00 -0400",
-    "url": "https://arxiv.org/abs/2603.11090",
-    "has_code": false,
-    "score": 1,
-    "domain_id": "general",
-    "abstract": "arXiv:2603.11090v1 Announce Type: new \nAbstract: Prior-data fitted networks (PFNs) have emerged as powerful foundation models for tabular causal inference, yet their extension to time series remains limited by the absence of synthetic data generators that provide interventional targets. Existing time series benchmarks generate observational data with ground-truth causal graphs but lack the interventional data required for training causal foundation models. To address this, we propose \\textbf{CausalTimePrior}, a principled framework for generating synthetic temporal structural causal models (TSCMs) with paired observational and interventional time series. Our prior supports configurable causal graph structures, nonlinear autoregressive mechanisms, regime-switching dynamics, and multiple intervention types (hard, soft, time-varying). We demonstrate that PFNs trained on CausalTimePrior can perform in-context causal effect estimation on held-out TSCMs, establishing a pathway toward foundation models for time series causal inference.",
-    "reason": "The paper focuses on causal inference for time series and synthetic data generation for causal priors (PFNs). It does not align with the specified context of LLM data selection, speculative decoding, or LLM-specific reasoning/CoT techniques."
-  },
-  {
-    "title": "Learning Tree-Based Models with Gradient Descent",
-    "authors": "Sascha Marton",
-    "source": "arXiv cs.LG",
-    "date": "Fri, 13 Mar 2026 00:00:00 -0400",
-    "url": "https://arxiv.org/abs/2603.11117",
-    "has_code": false,
-    "score": 1,
-    "domain_id": "general",
-    "abstract": "arXiv:2603.11117v1 Announce Type: new \nAbstract: Tree-based models are widely recognized for their interpretability and have proven effective in various application domains, particularly in high-stakes domains. However, learning decision trees (DTs) poses a significant challenge due to their combinatorial complexity and discrete, non-differentiable nature. As a result, traditional methods such as CART, which rely on greedy search procedures, remain the most widely used approaches. These methods make locally optimal decisions at each node, constraining the search space and often leading to suboptimal tree structures. Additionally, their demand for custom training methods precludes a seamless integration into modern machine learning (ML) approaches.\n  In this thesis, we propose a novel method for learning hard, axis-aligned DTs through gradient descent. Our approach utilizes backpropagation with a straight-through operator on a dense DT representation, enabling the joint optimization of all tree parameters, thereby addressing the two primary limitations of traditional DT algorithms. First, gradient-based training is not constrained by the sequential selection of locally optimal splits but, instead, jointly optimizes all tree parameters. Second, by leveraging gradient descent for optimization, our approach seamlessly integrates into existing ML approaches e.g., for multimodal and reinforcement learning tasks, which inherently rely on gradient descent.\n  These advancements allow us to achieve state-of-the-art results across multiple domains, including interpretable DTs rees for small tabular datasets, advanced models for complex tabular data, multimodal learning, and interpretable reinforcement learning without information loss. By bridging the gap between DTs and gradient-based optimization, our method significantly enhances the performance and applicability of tree-based models across various ML domains.",
-    "reason": "The paper focuses on optimizing axis-aligned Decision Trees (DTs) using gradient descent for tabular data, multimodal learning, and reinforcement learning. While it is a solid contribution to general machine learning architecture and interpretability, it is irrelevant to the specified research interests of LLM data selection, speculative decoding, and LLM-centric reasoning frameworks like Chain-of-Thought or Tree-of-Thoughts."
-  },
-  {
-    "title": "High-resolution weather-guided surrogate modeling for data-efficient cross-location building energy prediction",
-    "authors": "Piragash Manmatharasan, Girma Bitsuamlak, Katarina Grolinger",
-    "source": "arXiv cs.LG",
-    "date": "Fri, 13 Mar 2026 00:00:00 -0400",
-    "url": "https://arxiv.org/abs/2603.11121",
-    "has_code": false,
-    "score": 1,
-    "domain_id": "general",
-    "abstract": "arXiv:2603.11121v1 Announce Type: new \nAbstract: Building design optimization often depends on physics-based simulation tools such as EnergyPlus, which, although accurate, are computationally expensive and slow. Surrogate models provide a faster alternative, yet most are location-specific, and even weather-informed variants require simulations from many sites to generalize to unseen locations. This limitation arises because existing methods do not fully exploit the short-term weather-driven energy patterns shared across regions, restricting their scalability and reusability. This study introduces a high-resolution (weekly) weather-informed surrogate modeling approach that enhances model reusability across locations. By capturing recurring short-term weather-energy demand patterns common to multiple regions, the proposed method produces a generalized surrogate that performs well beyond the training location. Unlike previous weather-informed approaches, it does not require extensive simulations from multiple sites to achieve strong generalization. Experimental results show that when trained on a single location, the model maintains high predictive accuracy for other sites within the same climate zone, with no noticeable performance loss, and exhibits only minimal degradation when applied across different climate zones. These findings demonstrate the potential of climate-informed generalization for developing scalable and reusable surrogate models, supporting more sustainable and optimized building design practices.",
-    "reason": "The paper focuses on building energy prediction and surrogate modeling for physics-based simulations, which is entirely outside the target domains of LLM training, speculative decoding, and LLM reasoning."
   },
   {
     "title": "A Survey of Reasoning in Autonomous Driving Systems: Open Challenges and Emerging Paradigms",
