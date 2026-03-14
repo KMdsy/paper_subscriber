@@ -1,0 +1,8 @@
+config/
+scripts/
+templates/
+GEMINI.md
+*.backup
+*.log
+*.tmp
+__pycache__/
