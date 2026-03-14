@@ -38,7 +38,7 @@ Execute the main script:
 ```bash
 python3 scripts/fetch_and_process.py
 ```
-*Note: The script currently assumes an Obsidian vault path at `~/Obsidian/Research`. You may need to modify `VAULT_PATH` in `scripts/fetch_and_process.py` if your vault is located elsewhere.*
+*Note: The script currently assumes an Obsidian vault path at `~/Obsidian/content/Research`. You may need to modify `VAULT_PATH` in `scripts/fetch_and_process.py` if your vault is located elsewhere.*
 
 ## Development Conventions
 

@@ -12,7 +12,7 @@ from datetime import datetime
 # CONFIG
 CONFIG_PATH = Path("config/fields.yaml")
 WHITELIST_PATH = Path("config/whitelist.yaml")
-VAULT_PATH = Path.home() / "Obsidian" / "Research"
+VAULT_PATH = Path.home() / "Obsidian" / "content" / "Research"
 
 def load_yaml(path):
     if not path.exists(): return {}
