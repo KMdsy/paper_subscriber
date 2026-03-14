@@ -44,11 +44,14 @@
             <el-row :gutter="15">
                 <el-col v-for="paper in scoreGroup.papers" :key="paper.url" :span="24">
                     <el-card class="paper-card" shadow="never">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <el-link :href="paper.url" target="_blank" type="primary" style="font-size: 16px; font-weight: bold;">
-                                {{ paper.title }}
-                            </el-link>
-                            <span style="font-size: 12px; color: #999;">{{ paper.date }}</span>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <el-link :href="paper.url" target="_blank" type="primary" style="font-size: 16px; font-weight: bold; line-height: 1.4;">
+                                    {{ paper.title }}
+                                </el-link>
+                                <el-tag v-if="paper.has_code" size="small" type="success" style="margin-left: 8px; vertical-align: middle;">Code</el-tag>
+                            </div>
+                            <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 10px;">{{ paper.date }}</span>
                         </div>
                         
                         <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
@@ -56,13 +59,27 @@
                         </div>
 
                         <!-- 核心贡献 (如果有) -->
-                        <div v-if="paper.score_data && paper.score_data.core_contribution" style="color: #E6A23C; font-weight: bold; margin-bottom: 10px;">
-                            核心贡献: {{ paper.score_data.core_contribution }}
+                        <div v-if="paper.core_contribution" style="color: #E6A23C; font-weight: bold; margin-bottom: 10px; font-size: 14px;">
+                            💡 核心贡献: {{ paper.core_contribution }}
                         </div>
 
                         <!-- 中文摘要 -->
-                        <div class="abstract-zh">
-                            {{ paper.abstract_zh || '中文摘要生成中...' }}
+                        <div v-if="paper.abstract_zh" class="abstract-zh">
+                            {{ paper.abstract_zh }}
+                        </div>
+                        <div v-else-if="paper.score >= 2" class="abstract-zh" style="color: #909399; font-style: italic;">
+                            中文摘要生成中...
+                        </div>
+
+                        <!-- 推荐理由 (如果有) -->
+                        <div v-if="paper.reason" style="margin-top: 10px; font-size: 13px; color: #606266; background: #f4f4f5; padding: 10px; border-radius: 4px; line-height: 1.5;">
+                            <strong>分析:</strong> {{ paper.reason }}
+                        </div>
+
+                        <!-- 应用价值评分 (如果有) -->
+                        <div v-if="paper.app_value_score" style="margin-top: 12px; display: flex; align-items: center;">
+                            <span style="font-size: 13px; color: #606266; margin-right: 10px;">应用价值:</span>
+                            <el-rate v-model="paper.app_value_score" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
                         </div>
 
                         <!-- 折叠显示英文摘要 -->
@@ -71,13 +88,6 @@
                                 <div class="abstract-en">{{ paper.abstract }}</div>
                             </el-collapse-item>
                         </el-collapse>
-
-                        <!-- 5分论文深度展示 -->
-                        <div v-if="paper.score == 5 && paper.score_data" class="deep-dive-info">
-                            <p><strong>💡 方法:</strong> {{ paper.score_data.method_highlights }}</p>
-                            <p><strong>📊 实验:</strong> {{ paper.score_data.experiment_highlights }}</p>
-                            <p><strong>📝 任务清单:</strong> {{ paper.score_data.task_list }}</p>
-                        </div>
                     </el-card>
                 </el-col>
             </el-row>
