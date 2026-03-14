@@ -1,0 +1,24 @@
+domain:
+  - id: llm-data-selection
+    name: "LLM training: data selection"
+    priority: high
+    keywords:
+      - "data selection"
+      - "data curation"
+      - "data filtering"
+      - "curriculum learning"
+      - "data pruning"
+      - "data dedup"
+      - "data quality"
+      - "influence functions"
+    exclude_keywords: ["survey","tutorial"]
+  - id: speculative-decoding
+    name: "Speculative decoding"
+    priority: high
+    keywords:
+      - "speculative decoding"
+      - "two-pass decoding"
+      - "speculative sampling"
+      - "speculative parallel decoding"
+      - "fast decoding"
+    exclude_keywords: []
