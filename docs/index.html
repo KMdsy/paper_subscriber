@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paper Subscriber - 结构化看板</title>
+    <title>ArXiv Paper Subscriber - Shaoyu</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/@element-plus/icons-vue"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
     <style>
         body { background-color: #f5f7fa; font-family: -apple-system, sans-serif; }
@@ -20,7 +21,8 @@
         
         /* 简报样式 */
         .briefing-card { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #409EFF; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05); }
-        .briefing-tag { font-size: 12px; color: #909399; background: #f4f4f5; padding: 4px 12px; border-radius: 15px; margin-right: 10px; margin-bottom: 10px; display: inline-block; }
+        .briefing-tag { font-size: 12px; color: #909399; background: #f4f4f5; padding: 4px 12px; border-radius: 15px; margin-right: 10px; margin-bottom: 10px; display: inline-block; cursor: pointer; transition: all 0.3s; }
+        .briefing-tag:hover { background: #e9e9eb; color: #409EFF; transform: translateY(-2px); }
 
         /* 深度分析区块通用样式 */
         .info-block { padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 13px; line-height: 1.5; }
@@ -45,19 +47,19 @@
     <!-- 本日简报 -->
     <div v-if="briefingStats" class="briefing-card">
         <h3 style="margin-top: 0; color: #303133; display: flex; align-items: center;">
-            <el-icon style="margin-right: 8px;"><Histogram /></el-icon>📊 本日简报 ({{ briefingStats.date }})
+            📊 本日简报 ({{ briefingStats.date }})
         </h3>
         <p style="font-size: 14px; color: #606266; line-height: 1.8; margin-bottom: 15px;">
             今日论文 <strong>{{ briefingStats.total }}</strong> 篇，其中 <span v-html="briefingStats.sourceText"></span>。
         </p>
         <div style="display: flex; flex-wrap: wrap;">
-            <div v-for="d in briefingStats.domainBreakdown" :key="d.name" class="briefing-tag">
+            <div v-for="d in briefingStats.domainBreakdown" :key="d.id" class="briefing-tag" @click="scrollToDomain(d.id)">
                 <strong>{{ d.name }}</strong>: {{ d.text }}
             </div>
         </div>
     </div>
 
-    <div v-for="domain in groupedData" :key="domain.name" class="domain-section">
+    <div v-for="domain in groupedData" :key="domain.name" :id="'domain-' + domain.id" class="domain-section">
         <h2 class="domain-title">📌 {{ domain.name }}</h2>
         
         <el-collapse v-model="activeScoreGroups[domain.id]">
@@ -69,7 +71,7 @@
                     </h3>
                 </template>
 
-                <div class="score-group-content" style="padding: 10px 0 0 20px;">
+                <div class="score-group-content" style="padding: 0 24px;">
                     <el-row :gutter="15">
                         <el-col v-for="paper in scoreGroup.papers" :key="paper.url" :span="24">
                             <el-card class="paper-card" shadow="never">
@@ -222,11 +224,18 @@
             </el-collapse-item>
         </el-collapse>
     </div>
+
+    <!-- 返回顶部按钮 -->
+    <el-backtop :right="40" :bottom="40">
+        <div style="height: 100%; width: 100%; background-color: #f2f5f6; box-shadow: 0 0 6px rgba(0,0,0, .12); text-align: center; line-height: 40px; color: #1989fa; border-radius: 50%;">
+            <el-icon :size="20"><arrow-up /></el-icon>
+        </div>
+    </el-backtop>
 </div>
 
 <script>
     const { createApp, ref, computed, onMounted, watch } = Vue;
-    createApp({
+    const app = createApp({
         setup() {
             const papers = ref([]);
             const domainNames = ref({});
@@ -251,6 +260,13 @@
                 if (score >= 4) return 'warning';
                 if (score >= 3) return 'primary';
                 return 'info';
+            };
+
+            const scrollToDomain = (id) => {
+                const el = document.getElementById('domain-' + id);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                }
             };
 
             const groupedData = computed(() => {
@@ -300,7 +316,7 @@
                 // 领域分布统计
                 const domainBreakdown = groupedData.value.map(d => {
                     const scoreTexts = d.scores.map(sg => `${sg.val}分(${sg.papers.length})`).join(', ');
-                    return { name: d.name, text: scoreTexts };
+                    return { id: d.id, name: d.name, text: scoreTexts };
                 });
 
                 return { total, sourceText, domainBreakdown, date };
@@ -320,9 +336,13 @@
                 fetchPapers();
                 fetchDomains();
             });
-            return { briefingStats, groupedData, getScoreType, activeScoreGroups };
+            return { briefingStats, groupedData, getScoreType, activeScoreGroups, scrollToDomain };
         }
-    }).use(ElementPlus).mount('#app');
+    }).use(ElementPlus)
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component);
+    }
+    app.mount('#app');
 </script>
 </body>
 </html>

@@ -21,6 +21,14 @@ global_settings:
     url: https://export.arxiv.org/rss/cs.LG
   - name: arXiv cs.AI
     url: https://export.arxiv.org/rss/cs.AI
+  - name: arXiv cs.CV
+    url: https://export.arxiv.org/rss/cs.CV
+  - name: arXiv cs.RO
+    url: https://export.arxiv.org/rss/cs.RO
+  - name: arXiv cs.HC
+    url: https://export.arxiv.org/rss/cs.HC
+  - name: arXiv stat.ML
+    url: https://export.arxiv.org/rss/stat.ML
 domain:
 - id: llm-data-selection
   name: 'LLM training: data selection'
