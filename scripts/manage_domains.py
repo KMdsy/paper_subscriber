@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """
 Domain management script:
-- Add a domain inferred from a research topic (using Gemini)
+- Add a domain inferred from a research topic (using OpenRouter LLM)
 - Add a domain manually
 - Remove a domain by ID
 """
 import sys, yaml, json, subprocess, argparse, re
 from pathlib import Path
+from utils import OpenRouterClient
+
+# Initialize OpenRouter Client
+or_client = OpenRouterClient()
 
 CONFIG_PATH = Path("config/fields.yaml")
 
@@ -17,24 +21,6 @@ def load_config():
 def save_config(cfg):
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
         yaml.safe_dump(cfg, f, allow_unicode=True, sort_keys=False)
-
-def call_gemini_json(prompt):
-    cmd = ["gemini", "--output-format", "json", prompt]
-    try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=40)
-        if res.returncode != 0:
-            print(f"Gemini error: {res.stderr}")
-            return None
-        full_out = json.loads(res.stdout.strip())
-        inner_text = full_out.get("response", "")
-        # Extract JSON from inner markdown or text
-        match = re.search(r'\{.*\}', inner_text, re.DOTALL)
-        if match:
-            return json.loads(match.group(0))
-        return None
-    except Exception as e:
-        print(f"Gemini call failed: {e}")
-        return None
 
 def add_topic_inferred(topic):
     cfg = load_config()
@@ -50,18 +36,18 @@ def add_topic_inferred(topic):
 
     Example: {{"id": "test", "name": "Test", "keywords": ["k1"], "exclude_keywords": [], "priority": "high"}}
     """
-    print(f"Inferring domain for topic: '{topic}' via Gemini...")
-    domain_data = call_gemini_json(prompt)
-    if not domain_data or not isinstance(domain_data, dict):
-        print("Failed to infer domain data (not a dictionary).")
+    print(f"Inferring domain for topic: '{topic}' via LLM...")
+    domain_data = or_client.call_json(prompt)
+    if not domain_data or "error" in domain_data:
+        print(f"Failed to infer domain data: {domain_data.get('error', 'Unknown error')}")
         return
 
-    # Normalize keys (sometimes Gemini might capitalize or vary them)
+    # Normalize keys (sometimes LLM might capitalize or vary them)
     domain_data = {k.lower(): v for k, v in domain_data.items()}
     
     required_fields = ["id", "name", "keywords"]
     if not all(k in domain_data for k in required_fields):
-        print(f"Missing required fields in Gemini response: {domain_data}")
+        print(f"Missing required fields in LLM response: {domain_data}")
         return
 
     # Check for duplicate ID

@@ -5,9 +5,26 @@
 ## Quick Start 🚀
 
 ### 1. 查看与更改研究兴趣
-你的研究兴趣（关键词、领域、排除词）统一在配置文件中管理：
-- **配置文件地址**: `config/fields.yaml`
-- **操作方式**: 直接编辑该 YAML 文件。你可以添加新的领域 ID，或者在现有领域下增删关键词。
+你的研究兴趣（关键词、领域、排除词）统一在配置文件 `config/fields.yaml` 中管理。你可以通过以下两种方式更改：
+
+#### 方式 A：使用管理脚本 (推荐)
+可以使用 `scripts/manage_domains.py` 脚本快速增删领域：
+```bash
+# 1. 自动推断：只需输入你感兴趣的话题，LLM 会自动生成 ID、名称和关键词
+.venv/bin/python3 scripts/manage_domains.py add-topic "LLM 逻辑推理与思维链"
+
+# 2. 手动添加领域
+.venv/bin/python3 scripts/manage_domains.py add-manual --id "new-topic" --name "My Topic" --keywords "k1,k2"
+
+# 3. 查看当前所有监控领域
+.venv/bin/python3 scripts/manage_domains.py list
+
+# 4. 删除指定领域
+.venv/bin/python3 scripts/manage_domains.py remove "domain-id"
+```
+
+#### 方式 B：手动编辑
+直接编辑 `config/fields.yaml` 文件。你可以参照现有格式手动添加新的领域 ID，或者在现有领域下增删关键词。
 
 ### 2. 运行论文抓取与处理
 运行主脚本来获取最新论文。请确保在项目根目录下执行，并使用虚拟环境中的 Python：
