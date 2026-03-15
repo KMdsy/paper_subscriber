@@ -1,9 +1,7 @@
-config/
-templates/
 GEMINI.md
 *.backup.json
 *.log
 *.tmp
+.secret/
 __pycache__/
 tmp/
-.secret
