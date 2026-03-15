@@ -289,7 +289,7 @@ def main():
     existing_papers = []
     if json_path.exists():
         try:
-            backup_path = json_path.parent / f"data_{datetime.now(UTC8).strftime('%Y-%m-%d_%H-%M-%S')}.backup.json"
+            backup_path = json_path.parent / f"data_{(datetime.now(UTC8) - timedelta(days=1)).strftime('%Y-%m-%d_%H-%M-%S')}.backup.json"
             backup_path.write_text(json_path.read_text(encoding="utf-8"), encoding="utf-8")
             print(f"Backup created: {backup_path.name}")
             existing_papers = json.loads(json_path.read_text(encoding="utf-8"))
@@ -464,5 +464,5 @@ def recover_failed_papers():
         print("Final saved after recovery.")
 
 if __name__ == "__main__":
-    # main()
+    main()
     recover_failed_papers()

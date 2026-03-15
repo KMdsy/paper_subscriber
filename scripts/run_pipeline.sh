@@ -13,7 +13,16 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 # Navigation to project root
 cd "$PROJECT_ROOT" || { echo "❌ Critical: Could not change directory to $PROJECT_ROOT"; exit 1; }
 
-echo "🚀 Starting Pipeline: $(date)"
+
+# --- 🌟 醒目打印当前时间开始 🌟 ---
+CURRENT_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+echo ""
+echo "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓"
+echo "┃  🚀 PIPELINE STARTED                                       ┃"
+echo "┃  🕒 TIME: $CURRENT_TIME                              ┃"
+echo "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛"
+echo ""
+# --- 🌟 醒目打印当前时间结束 🌟 ---
 
 # 1. Check for .venv
 if [ ! -d ".venv" ]; then

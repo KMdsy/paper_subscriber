@@ -57,10 +57,10 @@ chmod +x scripts/run_pipeline.sh
 ```
 
 ### 设置定时任务 (Crontab)：
-你可以将其设置为每日定时运行（例如每天早上 8:30）：
+你可以将其设置为每日定时运行（例如每天早上 6:30）：
 ```bash
 # 执行 crontab -e 并添加以下行
-30 8 * * * /home/dsy/projects/paper_subscriber/scripts/run_pipeline.sh >> /home/dsy/projects/paper_subscriber/pipeline.log 2>&1
+30 6 * * * /home/dsy/projects/paper_subscriber/scripts/run_pipeline.sh >> /home/dsy/projects/paper_subscriber/pipeline.log 2>&1
 ```
 
 ## 项目结构 📁
