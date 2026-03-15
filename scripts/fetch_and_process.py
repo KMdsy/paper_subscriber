@@ -30,19 +30,23 @@ def load_yaml(path):
 def load_state():
     if not STATE_PATH.exists():
         # Default to 24 hours ago if no state exists
-        default_time = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        default_time = (datetime.now(UTC8) - timedelta(days=1)).isoformat()
         return {"last_update_time": default_time}
     try:
         return json.loads(STATE_PATH.read_text(encoding="utf-8"))
     except:
-        return {"last_update_time": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()}
+        return {"last_update_time": (datetime.now(UTC8) - timedelta(days=1)).isoformat()}
 
 def save_state(last_update_time_iso):
     STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
     STATE_PATH.write_text(json.dumps({"last_update_time": last_update_time_iso}, ensure_ascii=False, indent=2), encoding="utf-8")
 
 def struct_time_to_datetime(st):
-    return datetime.fromtimestamp(calendar.timegm(st), tz=timezone.utc)
+    # arXiv RSS timestamps are in Eastern Time (ET) but often labeled as GMT.
+    # We treat them as Eastern Time (assuming -5h offset) and convert to Beijing Time (UTC+8).
+    # EST is UTC-5, EDT is UTC-4. Using -5h for consistent 13-hour shift.
+    dt_et = datetime(*st[:6], tzinfo=timezone(timedelta(hours=-5)))
+    return dt_et.astimezone(UTC8)
 
 cfg = load_yaml(CONFIG_PATH)
 whitelist = load_yaml(WHITELIST_PATH)
@@ -286,24 +290,15 @@ def main():
     domains_json_path.write_text(json.dumps(domain_map, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Domain mapping exported to {domains_json_path}")
 
-    existing_papers = []
-    if json_path.exists():
-        try:
-            backup_path = json_path.parent / f"data_{(datetime.now(UTC8) - timedelta(days=1)).strftime('%Y-%m-%d_%H-%M-%S')}.backup.json"
-            backup_path.write_text(json_path.read_text(encoding="utf-8"), encoding="utf-8")
-            print(f"Backup created: {backup_path.name}")
-            existing_papers = json.loads(json_path.read_text(encoding="utf-8"))
-        except: pass
+    new_last_update_time_dt = datetime.now(UTC8)
     
-    existing_urls = {p["url"]: p for p in existing_papers}
-
-    new_last_update_time_dt = datetime.now(timezone.utc)
-    
+    paper_num = 0
     for src in sources:
         print(f"Fetching {src['name']}...")
         feed = feedparser.parse(src["url"])
         for entry in feed.entries:  
             url = entry.get("link", "")
+            paper_num += 1
             
             # 时间过滤：只保留大于最近更新时间的文章
             published_parsed = entry.get("published_parsed")
@@ -311,10 +306,6 @@ def main():
             pub_dt = struct_time_to_datetime(published_parsed)
             
             if pub_dt <= last_update_time_dt:
-                continue
-
-            # 如果 URL 已存在且已经有中文摘要，则跳过抓取
-            if url in existing_urls and "abstract_zh" in existing_urls[url] and existing_urls[url]["abstract_zh"]:
                 continue
 
             title = entry.get("title", "")
@@ -330,23 +321,33 @@ def main():
             is_pref = is_preferred_source(authors, summary)
             if best_domain["score"] == 0 and not is_pref: continue
 
+            # 把 abstract 中前面没用的东西去掉（arXiv 开头，到 Abstract 为止）
+            summary = re.sub(r"^\s*arXiv:\d+\.\d+v\d+\s+Announce Type:.*?\nAbstract: ", "", summary, flags=re.DOTALL)
             all_raw.append({
                 "title": title, "authors": authors, "source": src["name"],
-                "date": pub_dt.astimezone(UTC8).strftime("%Y-%m-%d %H:%M:%S"),
+                "date": pub_dt.astimezone(UTC8).strftime("%Y-%m-%d"),
                 "url": url, "has_code": "code" in summary.lower(),
                 "score": 1, "domain_id": best_domain["id"], # 至少是相关领域，所以初始分 1 分
                 "abstract": summary, "reason": ""
             })
-    
+    print(f"\nTotal new papers found: {paper_num}\n")
     if not all_raw:
         print("No new papers found.")
     else:
+        # 备份旧数据，避免覆盖后无法恢复
+        if json_path.exists():
+            try:
+                backup_path = json_path.parent / f"data_{(datetime.now(UTC8) - timedelta(days=1)).strftime('%Y-%m-%d_%H-%M-%S')}.backup.json"
+                backup_path.write_text(json_path.read_text(encoding="utf-8"), encoding="utf-8")
+                print(f"Backup created: {backup_path.name}")
+            except: pass
+
         print('=='*20)
         print(f"\nTotal new papers to process: {len(all_raw)}\n")
         print('=='*20)
 
         # 处理新论文
-        papers_dict = {p["url"]: p for p in existing_papers}
+        papers_dict = {}
         for i, p in enumerate(tqdm(all_raw, desc="Processing papers")):
             try:
                 res = process_paper(p, domains_context, new_last_update_time_dt)
@@ -378,7 +379,7 @@ def recover_failed_papers():
         return
 
     domains_context = "Domain with keywords:\n" + "\n".join([f"- {d['name']} (domain_id: {d['id']}): {', '.join(d['keywords'])}" for d in domains])
-    now_dt = datetime.now(timezone.utc)
+    now_dt = datetime.now(UTC8)
     needs_save = False
 
     print("\n" + "=="*20)
