@@ -340,33 +340,129 @@ def main():
     
     if not all_raw:
         print("No new papers found.")
-        return
+    else:
+        print('=='*20)
+        print(f"\nTotal new papers to process: {len(all_raw)}\n")
+        print('=='*20)
 
-    print('=='*20)
-    print(f"\nTotal new papers to process: {len(all_raw)}\n")
-    print('=='*20)
-
-    # 处理新论文
-    processed_list = []
-    for i, p in enumerate(tqdm(all_raw, desc="Processing papers")):
-        try:
-            res = process_paper(p, domains_context, new_last_update_time_dt)
-            if res: 
-                processed_list.append(res)
-                # 每处理一篇论文就保存一次，避免崩溃丢失数据
-                save_to_json(processed_list)
-                print(f"✅ Paper {i+1}/{len(all_raw)} saved: {p['title'][:50]}...")
-        except Exception as e:
-            print(f"❌ Failed to process paper {i+1}: {p['title'][:50]}... Error: {str(e)}")
-            continue
-        time.sleep(1) # 1s 避免过快调用 LLM 导致失败
-    
-    # 最终保存（实际上已经在循环中保存了，这里是确保）
-    save_to_json(processed_list)  # 全量保存，创建备份
+        # 处理新论文
+        papers_dict = {p["url"]: p for p in existing_papers}
+        for i, p in enumerate(tqdm(all_raw, desc="Processing papers")):
+            try:
+                res = process_paper(p, domains_context, new_last_update_time_dt)
+                if res: 
+                    papers_dict[res["url"]] = res
+                    # 每处理一篇论文就保存一次，避免崩溃丢失数据
+                    save_to_json(list(papers_dict.values()))
+                    print(f"✅ Paper {i+1}/{len(all_raw)} saved: {p['title'][:50]}...")
+            except Exception as e:
+                print(f"❌ Failed to process paper {i+1}: {p['title'][:50]}... Error: {str(e)}")
+                continue
+            time.sleep(1) # 1s 避免过快调用 LLM 导致失败
     
     # 更新并持久化最近更新时间
     save_state(new_last_update_time_dt.isoformat())
     print(f"State updated: last_update_time = {new_last_update_time_dt.astimezone(UTC8).strftime('%Y-%m-%d %H:%M:%S')} (UTC+8)")
 
+def recover_failed_papers():
+    """
+    检查 data.json 中是否有 error 字段的论文并尝试恢复
+    """
+    json_path = Path("docs/data.json")
+    if not json_path.exists(): return
+    
+    try:
+        papers = json.loads(json_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"Failed to load data.json for recovery: {e}")
+        return
+
+    domains_context = "Domain with keywords:\n" + "\n".join([f"- {d['name']} (domain_id: {d['id']}): {', '.join(d['keywords'])}" for d in domains])
+    now_dt = datetime.now(timezone.utc)
+    needs_save = False
+
+    print("\n" + "=="*20)
+    print("🔍 Starting Recovery Process for Failed Papers")
+    print("=="*20)
+    
+    for paper in papers:
+        if "error" in paper:
+            title = paper.get("title", "Unknown Title")
+            print(f"🔄 Attempting to recover: {title}...")
+            
+            success = False
+            for attempt in range(1, 4):
+                print(f"  Attempt {attempt}/3...")
+                try:
+                    # a. 如果是解析错误，尝试重新评分
+                    if paper.get("reason") == "parsing error fallback":
+                        ref = llm_refine_score(paper["title"], paper["abstract"], domains_context)
+                        if "error" not in ref:
+                            paper["score"] = ref.get("score", 1)
+                            paper["reason"] = ref.get("reason", "N/A")
+                            paper["domain_id"] = ref.get("domain_id", "general")
+                            paper.pop("error", None)
+                        else:
+                            paper["error"] = ref["error"]
+                            time.sleep(1)
+                            continue
+                    
+                    # b. 根据分数重新生成内容
+                    score = paper["score"]
+                    if score == 0:
+                        success = True
+                        paper.pop("error", None)
+                        break
+
+                    score_data = None
+                    if score in [5, 4]:
+                        score_data = generate_deep_dive(paper["title"], paper["abstract"])
+                    elif score == 3:
+                        score_data = generate_quick_read(paper["title"], paper["abstract"])
+                    elif score == 2:
+                        score_data = generate_abstract_zh(paper["title"], paper["abstract"])
+                    
+                    if score_data is not None:
+                        if "error" not in score_data:
+                            for k, v in score_data.items():
+                                paper[k] = v
+                            paper.pop("error", None)
+                            
+                            # 重新渲染并保存 Markdown 文件
+                            content = render_paper(paper, now_dt)
+                            domain_dir = VAULT_PATH / paper.get("domain_id", "general")
+                            domain_dir.mkdir(parents=True, exist_ok=True)
+                            safe_title = re.sub(r"[\\/:*?\"<>|]", "_", paper["url"].split("/")[-1])
+                            safe_title += '_' + re.sub(r"[\\/:*?\"<>|]", "_", paper["title"])[:100]
+                            fname = domain_dir / f"{datetime.now(UTC8).strftime('%Y%m%d')}_{safe_title}.md"
+                            fname.write_text(content, encoding="utf-8")
+                            
+                            success = True
+                            needs_save = True
+                            print(f"  ✅ Recovered successfully: {title}")
+                            break
+                        else:
+                            paper["error"] = score_data["error"]
+                    else:
+                        # 1 分文章不需要生成额外内容
+                        if score == 1:
+                            paper.pop("error", None)
+                            success = True
+                            needs_save = True
+                            print(f"  ✅ Recovered (Score 1): {title}")
+                            break
+                except Exception as e:
+                    print(f"  ❌ Recovery attempt {attempt} failed: {str(e)}")
+                
+                time.sleep(1)
+            
+            if not success:
+                print(f"  ⚠️ Failed to recover after 3 attempts: {title}")
+
+    if needs_save:
+        save_to_json(papers)
+        print("Final saved after recovery.")
+
 if __name__ == "__main__":
-    main()
+    # main()
+    recover_failed_papers()

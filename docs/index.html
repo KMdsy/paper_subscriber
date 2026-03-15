@@ -17,92 +17,220 @@
         .paper-card { margin-bottom: 15px; }
         .abstract-zh { font-size: 14px; color: #333; line-height: 1.6; }
         .abstract-en { font-size: 13px; color: #909399; margin-top: 10px; font-style: italic; }
-        .deep-dive-info { background: #fdf6ec; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 13px; }
+        
+        /* 简报样式 */
+        .briefing-card { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #409EFF; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05); }
+        .briefing-tag { font-size: 12px; color: #909399; background: #f4f4f5; padding: 4px 12px; border-radius: 15px; margin-right: 10px; margin-bottom: 10px; display: inline-block; }
+
+        /* 深度分析区块通用样式 */
+        .info-block { padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 13px; line-height: 1.5; }
+        .block-reason { background: #f4f4f5; color: #606266; }       /* 分析理由：中性灰 */
+        .block-contribution { background: #f9f0ff; color: #606266; } /* 核心贡献：柔和紫 */
+        .block-method { background: #fff7e6; color: #606266; }       /* 方法亮点：浅金橙 */
+        .block-experiment { background: #f6ffed; color: #606266; }   /* 实验亮点：清新绿 */
+        .block-pros { background: #e6fffb; color: #606266; }         /* 优点：薄荷青 */
+        .block-cons { background: #fff1f0; color: #606266; }         /* 缺点：淡雅粉 */
+        .block-repro { background: #e6f7ff; color: #606266; }        /* 可复现性：天空蓝 */
+
+        .missing-data { color: #F56C6C; font-style: italic; }
+        .info-block ul { margin: 5px 0 0 0; padding-left: 20px; }
     </style>
 </head>
 <body>
 <div id="app" class="container">
     <el-header style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #409EFF;">📚 Research Paper Dashboard (Hierarchical)</h1>
+        <h1 style="color: #409EFF;">📚 Research Paper Dashboard</h1>
     </el-header>
 
-    <div style="background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px;">
-        <el-input v-model="search" placeholder="搜索关键词..." style="width: 300px;"></el-input>
-        <el-checkbox v-model="showAbstractEn">显示英文摘要</el-checkbox>
+    <!-- 本日简报 -->
+    <div v-if="briefingStats" class="briefing-card">
+        <h3 style="margin-top: 0; color: #303133; display: flex; align-items: center;">
+            <el-icon style="margin-right: 8px;"><Histogram /></el-icon>📊 本日简报 ({{ briefingStats.date }})
+        </h3>
+        <p style="font-size: 14px; color: #606266; line-height: 1.8; margin-bottom: 15px;">
+            今日论文 <strong>{{ briefingStats.total }}</strong> 篇，其中 <span v-html="briefingStats.sourceText"></span>。
+        </p>
+        <div style="display: flex; flex-wrap: wrap;">
+            <div v-for="d in briefingStats.domainBreakdown" :key="d.name" class="briefing-tag">
+                <strong>{{ d.name }}</strong>: {{ d.text }}
+            </div>
+        </div>
     </div>
 
-    <!-- 领域分组渲染 -->
     <div v-for="domain in groupedData" :key="domain.name" class="domain-section">
         <h2 class="domain-title">📌 {{ domain.name }}</h2>
         
-        <div v-for="scoreGroup in domain.scores" :key="scoreGroup.val" class="score-group">
-            <h3 class="score-title">
-                <el-tag :type="getScoreType(scoreGroup.val)" effect="dark" style="margin-right: 10px;">{{ scoreGroup.val }} 分</el-tag>
-                <span>论文数量: {{ scoreGroup.papers.length }}</span>
-            </h3>
+        <el-collapse v-model="activeScoreGroups[domain.id]">
+            <el-collapse-item v-for="scoreGroup in domain.scores" :key="scoreGroup.val" :name="scoreGroup.val">
+                <template #title>
+                    <h3 class="score-title" style="margin: 0 0 0 24px; display: flex; align-items: center;">
+                        <el-tag :type="getScoreType(scoreGroup.val)" effect="dark" style="margin-right: 10px;">{{ scoreGroup.val }} 分</el-tag>
+                        <span>论文数量: {{ scoreGroup.papers.length }}</span>
+                    </h3>
+                </template>
 
-            <el-row :gutter="15">
-                <el-col v-for="paper in scoreGroup.papers" :key="paper.url" :span="24">
-                    <el-card class="paper-card" shadow="never">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                            <div style="flex: 1;">
-                                <el-link :href="paper.url" target="_blank" type="primary" style="font-size: 16px; font-weight: bold; line-height: 1.4;">
-                                    {{ paper.title }}
-                                </el-link>
-                                <el-tag v-if="paper.has_code" size="small" type="success" style="margin-left: 8px; vertical-align: middle;">Code</el-tag>
-                            </div>
-                            <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 10px;">{{ paper.date }}</span>
-                        </div>
-                        
-                        <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
-                            作者: {{ paper.authors }} | 来源: {{ paper.source }}
-                        </div>
+                <div class="score-group-content" style="padding: 10px 0 0 20px;">
+                    <el-row :gutter="15">
+                        <el-col v-for="paper in scoreGroup.papers" :key="paper.url" :span="24">
+                            <el-card class="paper-card" shadow="never">
+                                <!-- 基础信息 -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                    <div style="flex: 1;">
+                                        <el-link :href="paper.url" target="_blank" type="primary" style="font-size: 16px; font-weight: bold; line-height: 1.4;">
+                                            {{ paper.title }}
+                                        </el-link>
+                                        <el-tag v-if="paper.has_code" size="small" type="success" style="margin-left: 8px; vertical-align: middle;">Code</el-tag>
+                                    </div>
+                                    <span style="font-size: 12px; color: #999; white-space: nowrap; margin-left: 10px;">{{ paper.date }}</span>
+                                </div>
+                                <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                                    作者: {{ paper.authors }} | 来源: {{ paper.source }}
+                                </div>
 
-                        <!-- 核心贡献 (如果有) -->
-                        <div v-if="paper.core_contribution" style="color: #E6A23C; font-weight: bold; margin-bottom: 10px; font-size: 14px;">
-                            💡 核心贡献: {{ paper.core_contribution }}
-                        </div>
+                                <!-- ==========================================
+                                     样式 5 & 4: 深度研究 (5分及以上不含核心贡献字段)
+                                     ========================================== -->
+                                <template v-if="paper.score >= 4">
+                                    <div class="abstract-zh">
+                                        <strong>中文摘要: </strong> 
+                                        <span v-if="paper.abstract_zh">{{ paper.abstract_zh }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                    <el-collapse style="border: none; margin-top: 10px;">
+                                        <el-collapse-item title="查看英文摘要" name="en">
+                                            <div class="abstract-en">{{ paper.abstract || '获取失败，请检查日志' }}</div>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                    
+                                    <div class="info-block block-reason">
+                                        <strong>🔍 分析理由:</strong> 
+                                        <span v-if="paper.reason">{{ paper.reason }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                    
+                                    <!-- 4/5 分论文不展示核心贡献字段，直接展示亮点 -->
+                                    <div class="info-block block-method">
+                                        <strong>🔬 方法亮点:</strong>
+                                        <ul v-if="paper.method_highlights?.length">
+                                            <li v-for="i in paper.method_highlights" :key="i">{{ i }}</li>
+                                        </ul>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
 
-                        <!-- 中文摘要 -->
-                        <div v-if="paper.abstract_zh" class="abstract-zh">
-                            {{ paper.abstract_zh }}
-                        </div>
-                        <div v-else-if="paper.score >= 2" class="abstract-zh" style="color: #909399; font-style: italic;">
-                            中文摘要生成中...
-                        </div>
+                                    <div class="info-block block-experiment">
+                                        <strong>📊 实验亮点:</strong>
+                                        <ul v-if="paper.experiment_highlights?.length">
+                                            <li v-for="i in paper.experiment_highlights" :key="i">{{ i }}</li>
+                                        </ul>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
 
-                        <!-- 推荐理由 (如果有) -->
-                        <div v-if="paper.reason" style="margin-top: 10px; font-size: 13px; color: #606266; background: #f4f4f5; padding: 10px; border-radius: 4px; line-height: 1.5;">
-                            <strong>分析:</strong> {{ paper.reason }}
-                        </div>
+                                    <div class="info-block block-pros">
+                                        <strong>✅ 优点:</strong>
+                                        <ul v-if="paper.pros?.length">
+                                            <li v-for="i in paper.pros" :key="i">{{ i }}</li>
+                                        </ul>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
 
-                        <!-- 应用价值评分 (如果有) -->
-                        <div v-if="paper.app_value_score" style="margin-top: 12px; display: flex; align-items: center;">
-                            <span style="font-size: 13px; color: #606266; margin-right: 10px;">应用价值:</span>
-                            <el-rate v-model="paper.app_value_score" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
-                        </div>
+                                    <div class="info-block block-cons">
+                                        <strong>❌ 缺点:</strong>
+                                        <ul v-if="paper.cons?.length">
+                                            <li v-for="i in paper.cons" :key="i">{{ i }}</li>
+                                        </ul>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
 
-                        <!-- 折叠显示英文摘要 -->
-                        <el-collapse v-if="showAbstractEn" style="border: none; margin-top: 10px;">
-                            <el-collapse-item title="查看原始英文摘要" name="1">
-                                <div class="abstract-en">{{ paper.abstract }}</div>
-                            </el-collapse-item>
-                        </el-collapse>
-                    </el-card>
-                </el-col>
-            </el-row>
-        </div>
+                                    <div class="info-block block-repro">
+                                        <strong>🔗 可复现性:</strong> 
+                                        <span v-if="paper.reproducibility">{{ paper.reproducibility }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                </template>
+
+                                <!-- ==========================================
+                                     样式 3: 重点关注 (含核心贡献)
+                                     ========================================== -->
+                                <template v-else-if="paper.score === 3">
+                                    <div class="abstract-zh">
+                                        <strong>中文摘要:</strong> 
+                                        <span v-if="paper.abstract_zh">{{ paper.abstract_zh }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                    <el-collapse style="border: none; margin-top: 10px;">
+                                        <el-collapse-item title="查看英文摘要" name="en">
+                                            <div class="abstract-en">{{ paper.abstract || '获取失败，请检查日志' }}</div>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                    <div class="info-block block-reason">
+                                        <strong>🔍 分析理由:</strong> 
+                                        <span v-if="paper.reason">{{ paper.reason }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                    <div class="info-block block-contribution">
+                                        <strong>💡 核心贡献:</strong> 
+                                        <span v-if="paper.core_contribution">{{ paper.core_contribution }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                </template>
+
+                                <!-- ==========================================
+                                     样式 2: 简要总结
+                                     ========================================== -->
+                                <template v-else-if="paper.score === 2">
+                                    <div class="abstract-zh">
+                                        <strong>中文摘要:</strong> 
+                                        <span v-if="paper.abstract_zh">{{ paper.abstract_zh }}</span>
+                                        <span v-else-if="paper.score >= 2" style="color: #909399; font-style: italic;">生成中...</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                    <el-collapse style="border: none; margin-top: 10px;">
+                                        <el-collapse-item title="查看英文摘要" name="en">
+                                            <div class="abstract-en">{{ paper.abstract || '获取失败，请检查日志' }}</div>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                    <div class="info-block block-reason">
+                                        <strong>🔍 分析理由:</strong> 
+                                        <span v-if="paper.reason">{{ paper.reason }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                </template>
+
+                                <!-- ==========================================
+                                     样式 1: 仅记录
+                                     ========================================== -->
+                                <template v-else-if="paper.score === 1">
+                                    <div class="abstract-en" style="font-style: normal; color: #333; line-height: 1.6; font-size: 14px;">
+                                        <strong>英文摘要:</strong> {{ paper.abstract || '获取失败，请检查日志' }}
+                                    </div>
+                                    <div class="info-block block-reason">
+                                        <strong>🔍 分析理由:</strong> 
+                                        <span v-if="paper.reason">{{ paper.reason }}</span>
+                                        <span v-else class="missing-data">获取失败，请检查日志</span>
+                                    </div>
+                                </template>
+
+                                <!-- 应用价值 -->
+                                <div v-if="paper.app_value_score" style="margin-top: 12px; display: flex; align-items: center;">
+                                    <span style="font-size: 13px; color: #606266; margin-right: 10px;">应用价值:</span>
+                                    <el-rate v-model="paper.app_value_score" disabled show-score text-color="#ff9900" score-template="{value}"></el-rate>
+                                </div>
+                            </el-card>
+                        </col>
+                    </row>
+                </div>
+            </el-collapse-item>
+        </el-collapse>
     </div>
 </div>
 
 <script>
-    const { createApp, ref, computed, onMounted } = Vue;
+    const { createApp, ref, computed, onMounted, watch } = Vue;
     createApp({
         setup() {
             const papers = ref([]);
-            const search = ref('');
-            const showAbstractEn = ref(false);
             const domainNames = ref({});
+            const activeScoreGroups = ref({});
 
             const fetchPapers = async () => {
                 const res = await fetch('data.json');
@@ -126,27 +254,23 @@
             };
 
             const groupedData = computed(() => {
-                // 1. 过滤
-                const filtered = papers.value.filter(p => 
-                    p.title.toLowerCase().includes(search.value.toLowerCase()) || 
-                    p.abstract.toLowerCase().includes(search.value.toLowerCase())
-                );
-
-                // 2. 领域分组
                 const groups = {};
-                filtered.forEach(p => {
+                papers.value.forEach(p => {
                     const dId = p.domain_id || 'general';
                     if (!groups[dId]) groups[dId] = {};
                     if (!groups[dId][p.score]) groups[dId][p.score] = [];
                     groups[dId][p.score].push(p);
                 });
-
-                // 3. 结构化成数组
-                return Object.keys(groups).map(domainId => ({
+                const domainIds = Object.keys(groups).sort((a, b) => {
+                    if (a === 'general') return 1;
+                    if (b === 'general') return -1;
+                    return a.localeCompare(b);
+                });
+                return domainIds.map(domainId => ({
                     id: domainId,
                     name: domainNames.value[domainId] || domainId,
                     scores: Object.keys(groups[domainId])
-                        .sort((a, b) => b - a) // 分数降序
+                        .sort((a, b) => b - a)
                         .map(score => ({
                             val: parseInt(score),
                             papers: groups[domainId][score]
@@ -154,11 +278,49 @@
                 }));
             });
 
+            // 本日简报统计逻辑
+            const briefingStats = computed(() => {
+                if (!papers.value.length) return null;
+                const total = papers.value.length;
+                
+                let latestDateStr = '';
+                // 来源分布
+                const sources = {};
+                papers.value.forEach(p => { 
+                    sources[p.source] = (sources[p.source] || 0) + 1;
+                    if (p.date > latestDateStr) latestDateStr = p.date;
+                });
+                
+                const date = latestDateStr ? latestDateStr.substring(0, 10) : '未知日期';
+
+                const sourceText = Object.entries(sources)
+                    .map(([s, count]) => `<strong>${s}</strong> ${count} 篇`)
+                    .join('，');
+
+                // 领域分布统计
+                const domainBreakdown = groupedData.value.map(d => {
+                    const scoreTexts = d.scores.map(sg => `${sg.val}分(${sg.papers.length})`).join(', ');
+                    return { name: d.name, text: scoreTexts };
+                });
+
+                return { total, sourceText, domainBreakdown, date };
+            });
+
+            watch(groupedData, (newData) => {
+                newData.forEach(domain => {
+                    if (activeScoreGroups.value[domain.id] === undefined) {
+                        activeScoreGroups.value[domain.id] = domain.scores
+                            .filter(sg => sg.val >= 3)
+                            .map(sg => sg.val);
+                    }
+                });
+            }, { immediate: true });
+
             onMounted(() => {
                 fetchPapers();
                 fetchDomains();
             });
-            return { search, showAbstractEn, groupedData, getScoreType };
+            return { briefingStats, groupedData, getScoreType, activeScoreGroups };
         }
     }).use(ElementPlus).mount('#app');
 </script>
