@@ -10,6 +10,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from tqdm import tqdm
 from utils import OpenRouterClient
+import random
 
 # Initialize OpenRouter Client
 or_client = OpenRouterClient()
@@ -227,7 +228,7 @@ def process_paper(p, domains_context, last_update_time_dt):
     if 'error' in ref:
         print(f"⚠️ LLM refinement error for paper '{p['title']}': {ref['error']}")
         p['error'] = ref['error'] # 将错误信息保存在 paper 数据中，方便后续分析
-    if p["score"] == 0: return None
+    # if p["score"] == 0: return None # 0 分文章不需要生成内容，直接返回
     
     score_data = {}
     if p["score"] in [5, 4]:
@@ -239,7 +240,7 @@ def process_paper(p, domains_context, last_update_time_dt):
     elif p["score"] in [2]:
         print(f"Final Score: {p['score']} | Processing content...")
         score_data = generate_abstract_zh(p["title"], p["abstract"]) or {}
-    else:
+    else: # 0 / 1
         print(f"Final Score: {p['score']} | Skip processing content.")
 
     # 保存到 JSON
@@ -359,7 +360,8 @@ def main():
             except Exception as e:
                 print(f"❌ Failed to process paper {i+1}: {p['title'][:50]}... Error: {str(e)}")
                 continue
-            time.sleep(1) # 1s 避免过快调用 LLM 导致失败
+            # 随机睡眠，模拟人类行为，避免过快调用 LLM 导致失败
+            time.sleep(random.randint(5, 10)) 
     
     # 更新并持久化最近更新时间
     save_state(new_last_update_time_dt.isoformat())
@@ -381,11 +383,18 @@ def recover_failed_papers():
     domains_context = "Domain with keywords:\n" + "\n".join([f"- {d['name']} (domain_id: {d['id']}): {', '.join(d['keywords'])}" for d in domains])
     now_dt = datetime.now(UTC8)
     needs_save = False
-
+    
+    error_num = sum(1 for p in papers if "error" in p)
+    if error_num == 0:
+        print("No papers with errors found. No recovery needed.")
+        return 0
+    
     print("\n" + "=="*20)
     print("🔍 Starting Recovery Process for Failed Papers")
+    print(f"Total papers with errors: {error_num}")
     print("=="*20)
     
+    error_num = 0
     for paper in papers:
         if "error" in paper:
             title = paper.get("title", "Unknown Title")
@@ -405,7 +414,7 @@ def recover_failed_papers():
                             paper.pop("error", None)
                         else:
                             paper["error"] = ref["error"]
-                            time.sleep(1)
+                            time.sleep(random.randint(3, 5)) 
                             continue
                     
                     # b. 根据分数重新生成内容
@@ -446,24 +455,32 @@ def recover_failed_papers():
                             paper["error"] = score_data["error"]
                     else:
                         # 1 分文章不需要生成额外内容
-                        if score == 1:
+                        if score == 1 or score == 0:
                             paper.pop("error", None)
                             success = True
                             needs_save = True
-                            print(f"  ✅ Recovered (Score 1): {title}")
+                            print(f"  ✅ Recovered (Score 1 or 0): {title}")
                             break
                 except Exception as e:
                     print(f"  ❌ Recovery attempt {attempt} failed: {str(e)}")
                 
-                time.sleep(1)
+                time.sleep(random.randint(5, 10))
             
             if not success:
+                error_num += 1
                 print(f"  ⚠️ Failed to recover after 3 attempts: {title}")
 
     if needs_save:
         save_to_json(papers)
         print("Final saved after recovery.")
 
+    print(f"Total papers failed to recover: {error_num}")
+    return error_num
+
 if __name__ == "__main__":
     main()
-    recover_failed_papers()
+    while True:
+        error_num = recover_failed_papers()
+        if error_num == 0:
+            break
+        time.sleep(2*60)
